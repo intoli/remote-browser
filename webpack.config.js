@@ -1,5 +1,10 @@
 const path = require('path');
 
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+
+const package = require('./package.json');
+
+
 const options = {
   entry: {
     background: path.resolve(__dirname, 'src', 'background.js'),
@@ -18,6 +23,20 @@ const options = {
       },
     ],
   },
+  plugins: [
+    new CopyWebpackPlugin([{
+      from: "src/manifest.json",
+      transform: (manifest) => (
+        JSON.stringify({
+          description: package.description,
+          name: package.name,
+          version: package.version,
+          ...JSON.parse(manifest),
+        }, null, 2)
+      ),
+    }]),
+  ],
 };
+
 
 module.exports = options;

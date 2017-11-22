@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "feverdream@intoli.com"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+    "*://*/*"
+  ]
+}
