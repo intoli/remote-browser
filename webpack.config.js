@@ -1,5 +1,6 @@
 const path = require('path');
 
+const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const package = require('./package.json');
@@ -37,6 +38,12 @@ const options = {
     }]),
   ],
 };
+
+
+if (process.env.NODE_ENV === 'development') {
+  options.plugins.push(new ChromeExtensionReloader());
+  options.devtool = 'source-map';
+}
 
 
 module.exports = options;
