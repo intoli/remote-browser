@@ -7,6 +7,15 @@
 yarn install
 ```
 
+## Tests
+
+Run the tests with
+
+```bash
+yarn test
+```
+
+
 ## Live Reloading
 
 Run
