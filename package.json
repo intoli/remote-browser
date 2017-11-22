@@ -1,0 +1,9 @@
+{
+  "name": "feverdream",
+  "version": "0.0.1",
+  "description": "An implementation of the Nightmare.js API using cross-browser WebExtension API calls.",
+  "main": "index.js",
+  "repository": "git@github.com:sangaline/feverdream.git",
+  "author": "Evan Sangaline <esangaline@gmail.com>",
+  "license": "MIT"
+}
