@@ -1,3 +1,9 @@
+# Cache
+cache
+
+# Build outputs
+build
+
 # Logs
 logs
 *.log
