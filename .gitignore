@@ -3,6 +3,7 @@ cache
 
 # Build outputs
 build
+dist
 
 # Logs
 logs

@@ -8,11 +8,11 @@ const package = require('./package.json');
 
 const options = {
   entry: {
-    background: path.resolve(__dirname, 'src', 'background.js'),
-    content: path.resolve(__dirname, 'src', 'content.js'),
+    [path.join('extension', 'background')]: path.resolve(__dirname, 'src', 'extension', 'background.js'),
+    [path.join('extension', 'content')]: path.resolve(__dirname, 'src', 'extension', 'content.js'),
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js'
   },
   module: {
@@ -32,7 +32,8 @@ const options = {
   },
   plugins: [
     new CopyWebpackPlugin([{
-      from: "src/manifest.json",
+      from: path.resolve(__dirname, 'src', 'extension', 'manifest.json'),
+      to: path.join('extension', 'manifest.json'),
       transform: (manifest) => (
         JSON.stringify({
           description: package.description,
