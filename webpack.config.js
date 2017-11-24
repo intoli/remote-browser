@@ -1,6 +1,7 @@
 const path = require('path');
 
 const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const package = require('./package.json');
@@ -31,6 +32,7 @@ const options = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(['dist']),
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, 'src', 'extension', 'manifest.json'),
       to: path.join('extension', 'manifest.json'),
