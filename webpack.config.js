@@ -50,7 +50,12 @@ const options = {
 
 
 if (process.env.NODE_ENV === 'development') {
-  options.plugins.push(new ChromeExtensionReloader());
+  options.plugins.push(new ChromeExtensionReloader({
+    entries: {
+      background: path.join('extension', 'background'),
+      contentScript: path.join('extension', 'content'),
+    },
+  }));
   options.devtool = 'source-map';
 }
 
