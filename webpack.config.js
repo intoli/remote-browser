@@ -11,6 +11,7 @@ const options = {
   entry: {
     [path.join('extension', 'background')]: path.resolve(__dirname, 'src', 'extension', 'background.js'),
     [path.join('extension', 'content')]: path.resolve(__dirname, 'src', 'extension', 'content.js'),
+    index: path.resolve(__dirname, 'src', 'index.js'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

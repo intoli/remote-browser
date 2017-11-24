@@ -5,11 +5,5 @@
     "mocha": true
   },
   "extends": "airbnb-base",
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    }
-  }
+  "parser": "babel-eslint"
 }

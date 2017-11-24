@@ -2,7 +2,7 @@
   "name": "feverdream",
   "version": "0.0.1",
   "description": "An implementation of the Nightmare.js API using cross-browser WebExtension API calls.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "git@github.com:sangaline/feverdream.git",
   "author": "Evan Sangaline <esangaline@gmail.com>",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
@@ -27,5 +28,8 @@
     "mocha": "^4.0.1",
     "webpack": "^3.8.1",
     "webpack-chrome-extension-reloader": "^0.6.0"
+  },
+  "dependencies": {
+    "marionette-client": "^1.9.5"
   }
 }
