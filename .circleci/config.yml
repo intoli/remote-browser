@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/feverdream
     docker:
-      - image: circleci/node:7.10-browsers
+      - image: circleci/node:8.0-browsers
     steps:
       - checkout
       - run:
