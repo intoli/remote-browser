@@ -2,19 +2,18 @@ const path = require('path');
 
 const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const package = require('./package.json');
+const package = require('../package.json');
 
 
 const options = {
   entry: {
-    [path.join('extension', 'background')]: path.resolve(__dirname, 'src', 'extension', 'background.js'),
-    [path.join('extension', 'content')]: path.resolve(__dirname, 'src', 'extension', 'content.js'),
-    index: path.resolve(__dirname, 'src', 'index.js'),
+    'background': path.resolve(__dirname, '..', 'src', 'extension', 'background.js'),
+    'content': path.resolve(__dirname, '..', 'src', 'extension', 'content.js'),
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '..', 'dist', 'extension'),
     filename: '[name].js'
   },
   module: {
@@ -28,15 +27,15 @@ const options = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: 'babel-loader',
       },
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin([path.join('..', 'dist', 'extension')]),
     new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, 'src', 'extension', 'manifest.json'),
-      to: path.join('extension', 'manifest.json'),
+      from: path.resolve(__dirname, '..', 'src', 'extension', 'manifest.json'),
+      to: path.join('manifest.json'),
       transform: (manifest) => (
         JSON.stringify({
           description: package.description,
@@ -47,17 +46,18 @@ const options = {
       ),
     }]),
   ],
+  target: 'web',
+  devtool: 'source-map',
 };
 
 
 if (process.env.NODE_ENV === 'development') {
   options.plugins.push(new ChromeExtensionReloader({
     entries: {
-      background: path.join('extension', 'background'),
-      contentScript: path.join('extension', 'content'),
+      background: 'background',
+      contentScript: 'content',
     },
   }));
-  options.devtool = 'source-map';
 }
 
 

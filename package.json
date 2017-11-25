@@ -7,9 +7,9 @@
   "author": "Evan Sangaline <esangaline@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "NODE_ENV=production webpack",
+    "build": "NODE_ENV=production webpack --config webpack",
     "test": "NODE_ENV=test mocha --require babel-core/register",
-    "watch": "NODE_ENV=development webpack --watch"
+    "watch": "NODE_ENV=development webpack --watch --config webpack"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
