@@ -1,7 +1,7 @@
-import FeverDreamFirefox from './firefox';
+import FeverDreamChrome from './chrome';
 
 
 export default async (options) => {
-  const feverDream = new FeverDreamFirefox(options);
+  const feverDream = new FeverDreamChrome(options);
   await feverDream.initialize();
 };
