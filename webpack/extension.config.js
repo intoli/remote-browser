@@ -32,7 +32,12 @@ const options = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin([path.join('..', 'dist', 'extension')]),
+    new CleanWebpackPlugin(
+      [path.join('dist', 'extension')],
+      {
+        root: path.resolve(__dirname, '..'),
+      },
+    ),
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '..', 'src', 'extension', 'manifest.json'),
       to: path.join('manifest.json'),
