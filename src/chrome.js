@@ -16,7 +16,9 @@ export default class FeverDreamChrome extends FeverDreamBase {
       .setChromeOptions(new chrome.Options()
         .addArguments([`--load-extension=${extensionPath}`]))
       .build();
-    await this.driver.get(url);
+    if (url) {
+      await this.driver.get(url);
+    }
     return this;
   }
 }
