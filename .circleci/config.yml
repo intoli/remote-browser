@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/feverdream
+    docker:
+      - image: circleci/node:7.10-browsers
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - run:
+          name: update-yarn
+          command: 'sudo npm install -g yarn@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum 'yarn.lock' }}
+      - run:
+          name: install-dependencies
+          command: yarn install
+      - save_cache:
+          key: dependency-cache-{{ checksum 'yarn.lock' }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: yarn test
