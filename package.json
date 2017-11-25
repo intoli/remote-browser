@@ -30,6 +30,6 @@
     "webpack-chrome-extension-reloader": "^0.6.0"
   },
   "dependencies": {
-    "marionette-client": "^1.9.5"
+    "selenium-webdriver": "^3.6.0"
   }
 }
