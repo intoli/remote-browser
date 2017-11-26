@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack",
-    "test": "npm run build && NODE_ENV=test mocha --require babel-core/register",
+    "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
   },
   "devDependencies": {
