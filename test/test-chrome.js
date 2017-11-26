@@ -15,4 +15,9 @@ describe('Chrome', () => {
     const title = await chrome.driver.getTitle();
     chai.expect(title).to.equal('Successfully Installed');
   });
+
+  it('should echo sent messages', async () => {
+    const response = await chrome.server.send('hello', 'echo');
+    chai.expect(response).to.equal('hello');
+  });
 });
