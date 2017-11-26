@@ -1,10 +1,7 @@
-// Use the native browser WebSocket outside of node.
-if (typeof(window) === 'undefined') {
-  var WebSocket = require('ws');
-}
+import WebSocket from './ws';
 
 
-export class Client {
+export default class Client {
   close = async () => {
     this.ws.close();
   };

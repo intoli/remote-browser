@@ -5,7 +5,7 @@ import expressWs from 'express-ws';
 import portfinder from 'portfinder';
 
 
-export class Server extends EventEmitter {
+export default class Server extends EventEmitter {
   constructor() {
     super();
     this.messageIndex = 0;

@@ -1,2 +1,4 @@
-export { Client } from './client';
-export { Server } from './server';
+import Client from './client';
+import Server from './server';
+
+export { Client, Server };
