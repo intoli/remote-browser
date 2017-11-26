@@ -25,7 +25,9 @@
     "eslint-config-airbnb": "^16.1.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.8.0",
+    "imports-loader": "^0.7.1",
     "mocha": "^4.0.1",
+    "webextension-polyfill": "^0.2.1",
     "webpack": "^3.8.1",
     "webpack-chrome-extension-reloader": "^0.6.0"
   },
