@@ -1,11 +1,13 @@
+import EventEmitter from 'events';
+
 import express from 'express';
 import expressWs from 'express-ws';
 import portfinder from 'portfinder';
-import WebSocket from 'ws';
 
 
-export class Server {
+export class Server extends EventEmitter {
   constructor() {
+    super();
     this.messageIndex = 0;
     this.pendingMessages = {};
   }
@@ -66,32 +68,4 @@ export class Server {
   receiveMessage = message => (
     message
   );
-}
-
-
-export class Client {
-  close = async () => {
-    this.ws.close();
-  };
-
-  connect = async port => (new Promise((resolve, revoke) => {
-    this.port = port;
-    this.ws = new WebSocket(`ws://localhost:${port}/`);
-    let connected = false;
-    this.ws.on('open', () => {
-      connected = true;
-      resolve();
-    });
-    this.ws.on('error', (error) => {
-      if (!connected) {
-        revoke(error);
-      }
-    });
-    this.ws.on('message', (message) => {
-      const parsedMessage = JSON.parse(message);
-      if (parsedMessage.type === 'echo') {
-        this.ws.send(message);
-      }
-    });
-  }));
 }

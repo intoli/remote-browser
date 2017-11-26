@@ -1,5 +1,7 @@
 const path = require('path');
 
+const webpack = require('webpack');
+
 
 const options = {
   entry: {
@@ -26,6 +28,11 @@ const options = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'typeof window': '"undefined"',
+    }),
+  ],
   target: 'node',
   devtool: 'source-map',
   node: {

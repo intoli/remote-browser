@@ -3,6 +3,7 @@ const path = require('path');
 const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 const package = require('../package.json');
 
@@ -50,9 +51,16 @@ const options = {
         }, null, 2)
       ),
     }]),
+    new webpack.DefinePlugin({
+      'typeof window': '"object"',
+    }),
   ],
   target: 'web',
   devtool: 'source-map',
+  node: {
+    fs: 'empty',
+    net: 'empty',
+  },
 };
 
 
