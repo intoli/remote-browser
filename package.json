@@ -33,6 +33,7 @@
     "express": "^4.16.2",
     "express-ws": "^3.0.0",
     "portfinder": "^1.0.13",
-    "selenium-webdriver": "^3.6.0"
+    "selenium-webdriver": "^3.6.0",
+    "ws": "^3.3.2"
   }
 }

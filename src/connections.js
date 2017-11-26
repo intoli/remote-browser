@@ -7,7 +7,7 @@ import WebSocket from 'ws';
 export class Server {
   constructor() {
     this.messageIndex = 0;
-    this.pendingMessages;
+    this.pendingMessages = {};
   }
 
   close = async () => (new Promise((resolve, revoke) => {
@@ -23,9 +23,10 @@ export class Server {
   listen = async () => {
     this.app = express();
     expressWs(this.app);
-    this.app.ws('/', (ws, request) => {
+    this.app.ws('/', (ws) => {
+      this.emit('connect');
       this.ws = ws;
-      ws.on('message', this._receiveMessage);
+      ws.on('message', this.receiveMessage);
     });
     this.port = await portfinder.getPortPromise();
     this.server = await new Promise((resolve, revoke) => {
@@ -40,15 +41,16 @@ export class Server {
     return this.port;
   };
 
-  send = async (message, type='default') => {
-    const messageIndex = this.messageIndex++;
+  send = async (message, type = 'default') => {
+    this.messageIndex += 1;
+    const { messageIndex } = this;
     const packedMessage = {
       index: messageIndex,
       message,
       type,
     };
 
-    return new Promise((resolve, revoke) => {
+    return new Promise((resolve) => {
       const listener = (response) => {
         const parsedResponse = JSON.parse(response);
         if (parsedResponse.index === messageIndex) {
@@ -61,9 +63,9 @@ export class Server {
     });
   };
 
-  _receiveMessage = (message) => {
-
-  };
+  receiveMessage = message => (
+    message
+  );
 }
 
 
@@ -72,7 +74,7 @@ export class Client {
     this.ws.close();
   };
 
-  connect = async (port) => (new Promise((resolve, revoke) => {
+  connect = async port => (new Promise((resolve, revoke) => {
     this.port = port;
     this.ws = new WebSocket(`ws://localhost:${port}/`);
     let connected = false;
