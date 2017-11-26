@@ -1,6 +1,8 @@
 import path from 'path';
 import chai from 'chai';
 
+// We're using the compiled code, so must register the source maps.
+import 'source-map-support/register'
 import FeverDream from '../dist';
 
 
