@@ -1,4 +1,4 @@
-import { Client } from '../connections/client';
+import Client from '../connections/client';
 
 
 const findPort = async () => (new Promise((resolve) => {

@@ -37,6 +37,7 @@
     "express-ws": "^3.0.0",
     "portfinder": "^1.0.13",
     "selenium-webdriver": "^3.6.0",
+    "simple-websocket": "^5.1.0",
     "ws": "^3.3.2"
   }
 }

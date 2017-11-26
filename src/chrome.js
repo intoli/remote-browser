@@ -18,7 +18,7 @@ export default class FeverDreamChrome extends FeverDreamBase {
 
     return new Promise(async (resolve) => {
       this.server = new Server();
-      this.server.once('connect', resolve);
+      this.server.once('connection', resolve);
       this.port = await this.server.listen();
 
       const url = `file:///?feverDreamPort=${this.port}`;

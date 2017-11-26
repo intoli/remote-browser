@@ -1,4 +1,4 @@
-import WebSocket from './ws';
+import WebSocket from 'simple-websocket';
 
 
 export default class Client {
@@ -10,7 +10,7 @@ export default class Client {
     this.port = port;
     this.ws = new WebSocket(`ws://localhost:${port}/`);
     let connected = false;
-    this.ws.on('open', () => {
+    this.ws.on('connect', () => {
       connected = true;
       resolve();
     });
@@ -19,7 +19,7 @@ export default class Client {
         revoke(error);
       }
     });
-    this.ws.on('message', (message) => {
+    this.ws.on('data', (message) => {
       const parsedMessage = JSON.parse(message);
       if (parsedMessage.type === 'echo') {
         this.ws.send(message);

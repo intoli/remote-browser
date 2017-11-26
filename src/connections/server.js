@@ -1,8 +1,7 @@
 import EventEmitter from 'events';
 
-import express from 'express';
-import expressWs from 'express-ws';
 import portfinder from 'portfinder';
+import WebSocketServer from 'simple-websocket/server';
 
 
 export default class Server extends EventEmitter {
@@ -22,26 +21,28 @@ export default class Server extends EventEmitter {
     });
   }));
 
-  listen = async () => {
-    this.app = express();
-    expressWs(this.app);
-    this.app.ws('/', (ws) => {
-      this.emit('connect');
-      this.ws = ws;
-      ws.on('message', this.receiveMessage);
-    });
+  listen = async () => new Promise(async (resolve, revoke) => {
     this.port = await portfinder.getPortPromise();
-    this.server = await new Promise((resolve, revoke) => {
-      const server = this.app.listen(this.port, 'localhost', (error) => {
-        if (error) {
-          revoke(error);
-        } else {
-          resolve(server);
-        }
-      });
+    this.server = new WebSocketServer({
+      host: 'localhost',
+      port: this.port,
     });
-    return this.port;
-  };
+
+    // eslint-disable-next-line no-underscore-dangle
+    this.server._server.once('listening', (error) => {
+      if (error) {
+        revoke(error);
+      } else {
+        resolve(this.port);
+      }
+    });
+
+    this.server.on('connection', (ws) => {
+      this.emit('connection');
+      this.ws = ws;
+      ws.on('data', this.receiveMessage);
+    });
+  });
 
   send = async (message, type = 'default') => {
     this.messageIndex += 1;
@@ -60,7 +61,7 @@ export default class Server extends EventEmitter {
           this.ws.removeListener('message', listener);
         }
       };
-      this.ws.on('message', listener);
+      this.ws.on('data', listener);
       this.ws.send(JSON.stringify(packedMessage));
     });
   };
