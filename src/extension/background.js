@@ -2,8 +2,9 @@ import Client from '../connections/client';
 
 
 const findPort = async () => (new Promise((resolve) => {
-  const extractPort = (tabId, changeInfo) => {
-    const match = /feverDreamPort=(\d+)/.exec(changeInfo.url);
+  const extractPort = (tabId, changeInfo, tab) => {
+    const url = tab ? tab.url : tabId;
+    const match = /feverDreamPort=(\d+)/.exec(url);
     if (match && match.length > 1) {
       const port = match[1];
       resolve(port);
@@ -11,12 +12,11 @@ const findPort = async () => (new Promise((resolve) => {
     }
   };
   browser.tabs.onUpdated.addListener(extractPort);
+  browser.tabs.getCurrent().then(extractPort);
 }));
 
 (async () => {
   const port = await findPort();
-  console.log(`Port: ${port}`);
   const client = new Client();
   await client.connect(port);
-  console.log('connected!');
 })();
