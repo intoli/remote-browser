@@ -4,9 +4,10 @@ export default class FeverDreamBase {
   }
 
   end = async () => {
-    await this.server.close();
-
     // Works for Selenium driven clients.
     await this.driver.quit();
+
+    // Do this after so the connection breaks.
+    await this.server.close();
   };
 }
