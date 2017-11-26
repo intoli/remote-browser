@@ -13,6 +13,10 @@ const options = {
     library: 'feverdream',
     libraryTarget: 'umd',
   },
+  externals: [
+    'express',
+    'ws',
+  ],
   module: {
     rules: [
       {
