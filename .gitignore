@@ -1,3 +1,13 @@
+# Editor Files
+.tern-port
+
+# Cache
+cache
+
+# Build outputs
+build
+dist
+
 # Logs
 logs
 *.log
