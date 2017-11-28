@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack",
-    "test": "npm run build && NODE_ENV=test mocha-parallel-tests --exit --require babel-core/register",
+    "test": "npm run build && NODE_ENV=test mocha-parallel-tests --require babel-core/register",
+    "test-fast": "NODE_ENV=test mocha-parallel-tests --require babel-core/register --invert --grep Browser",
+    "test-fast-mocha": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
   },
   "devDependencies": {

@@ -6,7 +6,7 @@ import 'source-map-support/register'
 import FeverDream from '../dist';
 
 
-describe('Chrome', function() {
+describe('Chrome Browser', function() {
   this.timeout(5000);
   let chrome;
   before(async () => chrome = await FeverDream());
