@@ -1,16 +1,10 @@
-import EventEmitter from 'events';
-
 import portfinder from 'portfinder';
 import WebSocketServer from 'simple-websocket/server';
 
+import ConnectionBase from './base';
 
-export default class Server extends EventEmitter {
-  constructor() {
-    super();
-    this.messageIndex = 0;
-    this.pendingMessages = {};
-  }
 
+export default class Server extends ConnectionBase {
   close = async () => (new Promise((resolve, revoke) => {
     this.server.close((error) => {
       if (error) {
@@ -39,34 +33,7 @@ export default class Server extends EventEmitter {
 
     this.server.on('connection', (ws) => {
       this.emit('connection');
-      this.ws = ws;
-      ws.on('data', this.receiveMessage);
+      this.attachWebSocket(ws);
     });
   });
-
-  send = async (message, type = 'default') => {
-    this.messageIndex += 1;
-    const { messageIndex } = this;
-    const packedMessage = {
-      index: messageIndex,
-      message,
-      type,
-    };
-
-    return new Promise((resolve) => {
-      const listener = (response) => {
-        const parsedResponse = JSON.parse(response);
-        if (parsedResponse.index === messageIndex) {
-          resolve(parsedResponse.message);
-          this.ws.removeListener('message', listener);
-        }
-      };
-      this.ws.on('data', listener);
-      this.ws.send(JSON.stringify(packedMessage));
-    });
-  };
-
-  receiveMessage = message => (
-    message
-  );
 }

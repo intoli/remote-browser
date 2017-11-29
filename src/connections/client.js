@@ -1,28 +1,25 @@
 import WebSocket from 'simple-websocket';
 
+import ConnectionBase from './base';
 
-export default class Client {
+
+export default class Client extends ConnectionBase {
   close = async () => {
     this.ws.close();
   };
 
   connect = async port => (new Promise((resolve, revoke) => {
     this.port = port;
-    this.ws = new WebSocket(`ws://localhost:${port}/`);
+    const ws = this.attachWebSocket(new WebSocket(`ws://localhost:${port}/`));
     let connected = false;
-    this.ws.on('connect', () => {
+    ws.on('connect', () => {
+      this.emit('connection');
       connected = true;
       resolve();
     });
-    this.ws.on('error', (error) => {
+    ws.on('error', (error) => {
       if (!connected) {
         revoke(error);
-      }
-    });
-    this.ws.on('data', (message) => {
-      const parsedMessage = JSON.parse(message);
-      if (parsedMessage.type === 'echo') {
-        this.ws.send(message);
       }
     });
   }));
