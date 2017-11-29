@@ -17,8 +17,17 @@ parallel('Connections', () => {
     const { client } = await createConnection();
     chai.expect(await client.ping()).to.equal('pong');
   });
+
   it('should handle pings from the server', async () => {
     const { client } = await createConnection();
     chai.expect(await client.ping()).to.equal('pong');
+  });
+
+  it('should echo messages from the client', async () => {
+    const { client, server } = await createConnection();
+    const sent = 'hello';
+    server.subscribe(async (echoed) => echoed);
+    const received = await client.send(sent);
+    chai.expect(sent).to.equal(received);
   });
 });
