@@ -71,7 +71,7 @@ export default class ConnectionBase extends EventEmitter {
     });
   };
 
-  send = async (data, channel) => {
+  send = async (data, { channel, timeout }={}) => {
     this.messageIndex += 1;
     const message = {
       data,
@@ -89,15 +89,15 @@ export default class ConnectionBase extends EventEmitter {
           revoke();
           delete this.pendingMessageResolves[messageIndex];
         }
-      }, this.messageTimeout);
+      }, timeout || this.messageTimeout);
     });
   };
 
-  subscribe = (callback, channel) => {
+  subscribe = (callback, { channel }={}) => {
     this.subscriptions[channel] = callback;
   };
 
-  unsubscribe = (callback, channel) => {
+  unsubscribe = (callback, { channel }={}) => {
     delete this.subscripions[channel];
   };
 }

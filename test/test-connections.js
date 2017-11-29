@@ -43,7 +43,7 @@ parallel('Connections', () => {
     const channels = [];
     for (let i = 0; i < channelCount; i++) {
       const channel = `channel-${i}`;
-      server.subscribe(async (data) => ({ channel, data }), channel);
+      server.subscribe(async (data) => ({ channel, data }), { channel });
       channels.push(channel);
     }
 
@@ -53,7 +53,7 @@ parallel('Connections', () => {
     for (let i = 0; i < messageCount; i++) {
       const channel = channels[i % channelCount];
       expectedMessages.push({ channel, data: i });
-      promises.push(client.send(i, channel));
+      promises.push(client.send(i, { channel }));
     }
     const messages = await Promise.all(promises);
 
@@ -66,7 +66,7 @@ parallel('Connections', () => {
     server.subscribe(async () => new Promise(() => {}));
     let error;
     try {
-      await client.send(null, timeout=10);
+      await client.send(null, { timeout: 10 });
     } catch (e) {
       error = e;
     }
