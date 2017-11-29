@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
 
+import { TimeoutError } from '../errors';
+
 
 export default class ConnectionBase extends EventEmitter {
   constructor() {
@@ -86,7 +88,7 @@ export default class ConnectionBase extends EventEmitter {
       this.ws.send(JSON.stringify(message));
       setTimeout(() => {
         if (this.pendingMessageResolves[messageIndex]) {
-          revoke();
+          revoke(new TimeoutError('No websocket response was received within the timeout.'));
           delete this.pendingMessageResolves[messageIndex];
         }
       }, timeout || this.messageTimeout);
