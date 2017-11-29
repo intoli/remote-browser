@@ -19,4 +19,5 @@ const findPort = async () => (new Promise((resolve) => {
   const port = await findPort();
   const client = new Client();
   await client.connect(port);
+  client.subscribe(async () => 'connected!');
 })();

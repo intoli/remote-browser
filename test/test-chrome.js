@@ -19,8 +19,8 @@ describe('Chrome Browser', function() {
     chai.expect(title).to.equal('Successfully Installed');
   });
 
-  it('should echo sent messages', async () => {
-    const response = await chrome.server.send('hello', 'echo');
-    chai.expect(response).to.equal('hello');
+  it('should receive a connection message', async () => {
+    const response = await chrome.server.send();
+    chai.expect(response).to.equal('connected!');
   });
 });
