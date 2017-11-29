@@ -20,5 +20,10 @@ parallel('utils', () => {
       const promise = new utils.TimeoutPromise(resolve => resolve(value), 50);
       chai.expect(promise).to.eventually.equal(value);
     });
+    it('should revoke with the correct value', () => {
+      const value = 'hello';
+      const promise = new utils.TimeoutPromise((resolve, revoke) => revoke(new Error(value)), 50);
+      chai.expect(promise).to.be.rejectedWith(Error, value);
+    });
   });
 });
