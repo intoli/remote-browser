@@ -2,6 +2,8 @@ import chai from 'chai';
 import parallel from 'mocha.parallel';
 
 import { Client, Server } from '../src/connections';
+import { TimeoutError } from '../src/errors';
+
 
 const createConnection = async () => {
   const server = new Server();
@@ -11,6 +13,7 @@ const createConnection = async () => {
 
   return { client, port, server };
 };
+
 
 parallel('Connections', () => {
   it('should handle pings from the client', async () => {
@@ -55,5 +58,18 @@ parallel('Connections', () => {
     const messages = await Promise.all(promises);
 
     chai.expect(messages).to.deep.equal(expectedMessages);
+  });
+
+  it('should raise a timeout error waiting for a response', async () => {
+    const { client, server } = await createConnection();
+
+    server.subscribe(async () => new Promise(() => {}));
+    let error;
+    try {
+      await client.send(null, timeout=10);
+    } catch (e) {
+      error = e;
+    }
+    chai.expect(error).to.be.instanceof(TimeoutError);
   });
 });
