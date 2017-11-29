@@ -59,8 +59,8 @@ export default class ConnectionBase extends EventEmitter {
     }));
   };
 
-  ping = async () => {
-    return new Promise((resolve, revoke) => {
+  ping = async () => (
+    new Promise((resolve, revoke) => {
       this.pendingPingResolves.push(resolve);
       this.ws.send('ping');
       setTimeout(() => {
@@ -70,10 +70,10 @@ export default class ConnectionBase extends EventEmitter {
           revoke();
         }
       }, this.pingTimeout);
-    });
-  };
+    })
+  );
 
-  send = async (data, { channel, timeout }={}) => {
+  send = async (data, { channel, timeout } = {}) => {
     this.messageIndex += 1;
     const message = {
       data,
@@ -82,7 +82,7 @@ export default class ConnectionBase extends EventEmitter {
       response: false,
     };
 
-    const messageIndex = this.messageIndex;
+    const { messageIndex } = this;
     return new Promise((resolve, revoke) => {
       this.pendingMessageResolves[messageIndex] = resolve;
       this.ws.send(JSON.stringify(message));
@@ -95,11 +95,11 @@ export default class ConnectionBase extends EventEmitter {
     });
   };
 
-  subscribe = (callback, { channel }={}) => {
+  subscribe = (callback, { channel } = {}) => {
     this.subscriptions[channel] = callback;
   };
 
-  unsubscribe = (callback, { channel }={}) => {
+  unsubscribe = (callback, { channel } = {}) => {
     delete this.subscripions[channel];
   };
 }
