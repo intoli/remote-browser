@@ -5,7 +5,8 @@ export default class ConnectionBase extends EventEmitter {
   constructor() {
     super();
     this.messageIndex = 0;
-    this.pendingMessages = {};
+    this.messageTimeout = 30000;
+    this.pendingMessageResolves = {};
     this.pendingPingResolves = [];
     this.pingTimeout = 30000;
     this.subscriptions = {};
@@ -21,7 +22,7 @@ export default class ConnectionBase extends EventEmitter {
     return ws;
   };
 
-  onData = (data) => {
+  onData = async (data) => {
     // Handle ping/pong keep alives.
     if (data.length === 4) {
       const text = data.toString ? data.toString() : data;
@@ -35,6 +36,25 @@ export default class ConnectionBase extends EventEmitter {
         return;
       }
     }
+
+    const message = JSON.parse(data);
+
+    // Handle responses to messages that we originated.
+    if (message.response) {
+      if (this.pendingMessageResolves[message.messageIndex]) {
+        this.pendingMessageResolves[message.messageIndex](message.data);
+        delete this.pendingMessageResolves[message.messageIndex];
+      }
+      return;
+    }
+
+    // Handle messages that we did not originate.
+    const responseData = await this.subscriptions[message.channel](message.data);
+    this.ws.send(JSON.stringify({
+      ...message,
+      data: responseData,
+      response: true,
+    }));
   };
 
   ping = async () => {
@@ -53,24 +73,31 @@ export default class ConnectionBase extends EventEmitter {
 
   send = async (data, channel) => {
     this.messageIndex += 1;
-    const message = JSON.stringify({
+    const message = {
       data,
+      channel,
       messageIndex: this.messageIndex,
-      messageStage: 0,
-    });
+      response: false,
+    };
 
+    const messageIndex = this.messageIndex;
     return new Promise((resolve, revoke) => {
-      this.ws.send(message);
+      this.pendingMessageResolves[messageIndex] = resolve;
+      this.ws.send(JSON.stringify(message));
+      setTimeout(() => {
+        if (this.pendingMessageResolves[messageIndex]) {
+          revoke();
+          delete this.pendingMessageResolves[messageIndex];
+        }
+      }, this.messageTimeout);
     });
   };
 
   subscribe = (callback, channel) => {
-    this.subscripions[channel] = this.subscriptions[channel] || [];
-    this.subscriptions[channel].push(callback);
+    this.subscriptions[channel] = callback;
   };
 
   unsubscribe = (callback, channel) => {
-    this.subscriptions[channel] = ([] || this.subscriptions[channel])
-      .filter(existingCallback => existingCallback !== callback);
+    delete this.subscripions[channel];
   };
 }
