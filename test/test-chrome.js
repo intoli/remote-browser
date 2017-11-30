@@ -23,4 +23,10 @@ describe('Chrome Browser', function() {
     const response = await chrome.server.ping();
     chai.expect(response).to.equal('pong');
   });
+
+  it('should execute JavaScript in the background', async () => {
+    const userAgent = await chrome.evaluateInBackground(async () => window.navigator.userAgent);
+    chai.expect(userAgent).to.be.a('string');
+    chai.expect(userAgent).to.have.lengthOf.above(10);
+  });
 });
