@@ -21,6 +21,8 @@ const findPort = async () => (new Promise((resolve) => {
   const client = new Client();
   await client.connect(port);
 
-  // eslint-disable-next-line no-eval
-  client.subscribe(async code => eval(`(${code})()`), { channel: 'evaluateInBackground' });
+  client.subscribe(async ({ args, asyncFunction }) => (
+    // eslint-disable-next-line no-eval
+    eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
+  ), { channel: 'evaluateInBackground' });
 })();
