@@ -28,7 +28,10 @@ export default class FeverDreamBase {
     await this.server.close();
   };
 
-  evaluateInBackground = async asyncFunction => (
-    this.server.send(asyncFunction.toString(), { channel: 'evaluateInBackground' })
+  evaluateInBackground = async (asyncFunction, ...args) => (
+    this.server.send({
+      args,
+      asyncFunction: asyncFunction.toString(),
+    }, { channel: 'evaluateInBackground' })
   );
 }
