@@ -1,3 +1,4 @@
+import assert from 'assert';
 import path from 'path';
 
 import { Server } from './connections';
@@ -9,8 +10,9 @@ export default class FeverDreamBase {
   }
 
   initialize = async () => {
+    // Initialze and connect to the browser.
     const extension = path.resolve(__dirname, 'extension');
-    return new Promise(async (resolve) => {
+    await new Promise(async (resolve) => {
       this.server = new Server();
       this.server.once('connection', resolve);
       this.port = await this.server.listen();
@@ -18,6 +20,27 @@ export default class FeverDreamBase {
 
       await this.initializeDriver(url, extension);
     });
+
+    // Find the current tab id.
+    this.tabIds = await this.evaluateInBackground(async () => (
+      (await browser.tabs.query({ active: true })).map(tab => tab.id)
+    ));
+    assert(this.tabIds.length === 1);
+    [this.tabId] = this.tabIds;
+  };
+
+  createTab = async (url = 'about:blank') => {
+    const tab = new this.constructor(this.options);
+    tab.port = this.port;
+    tab.server = this.server;
+    tab.tabIds = this.tabIds;
+
+    tab.tabId = await this.evaluateInBackground(async injectedUrl => (
+      (await browser.tabs.create({ url: injectedUrl })).id
+    ), url);
+
+    tab.tabIds.push(tab.tabId);
+    return tab;
   };
 
   end = async () => {
