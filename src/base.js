@@ -51,6 +51,12 @@ export default class FeverDreamBase {
     await this.server.close();
   };
 
+  goto = async url => (
+    this.evaluateInBackground(async (injectedUrl, tabId) => (
+      browser.tabs.update(tabId, { url: injectedUrl })
+    ), url, this.tabId)
+  );
+
   evaluateInBackground = async (asyncFunction, ...args) => (
     this.server.send({
       args,
