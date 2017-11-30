@@ -9,6 +9,7 @@ const findPort = async () => (new Promise((resolve) => {
       const port = match[1];
       resolve(port);
       browser.tabs.onUpdated.removeListener(extractPort);
+      browser.tabs.update({ url: 'about:blank' });
     }
   };
   browser.tabs.onUpdated.addListener(extractPort);
