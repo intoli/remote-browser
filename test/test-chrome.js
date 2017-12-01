@@ -12,13 +12,6 @@ describe('Chrome Browser', function() {
   before(async () => chrome = await FeverDream());
   after(async () => await chrome.end());
 
-  it('should install and run the extension', async () => {
-    const htmlFile = path.resolve(__dirname, 'data', 'blank-page.html');
-    await chrome.driver.get(`file://${htmlFile}`);
-    const title = await chrome.driver.getTitle();
-    chai.expect(title).to.equal('Successfully Installed');
-  });
-
   it('should receive a ping/pong response', async () => {
     const response = await chrome.server.ping();
     chai.expect(response).to.equal('pong');
