@@ -15,9 +15,14 @@ const findPort = async () => (new Promise((resolve) => {
   browser.tabs.getCurrent().then(extractPort);
 }));
 
+
 (async () => {
   const port = await findPort();
   const client = new Client();
   await client.connect(port);
-  client.subscribe(async () => 'connected!');
+
+  client.subscribe(async ({ args, asyncFunction }) => (
+    // eslint-disable-next-line no-eval
+    eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
+  ), { channel: 'evaluateInBackground' });
 })();
