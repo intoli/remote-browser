@@ -33,7 +33,7 @@ export default class FeverDreamBase {
     await this.evaluateInBackground(async tabId => (
       browser.tabs.remove(tabId)
     ), this.tabId);
-    this.tabIds.splice(this.tabIds.indexOf(this.tabId));
+    this.tabIds.splice(this.tabIds.indexOf(this.tabId), 1);
     if (!this.tabIds.length) {
       await this.end();
     }
