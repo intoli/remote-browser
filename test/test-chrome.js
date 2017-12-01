@@ -12,13 +12,6 @@ describe('Chrome Browser', function() {
   before(async () => chrome = await FeverDream());
   after(async () => await chrome.end());
 
-  it('should install and run the extension', async () => {
-    const htmlFile = path.resolve(__dirname, 'data', 'blank-page.html');
-    await chrome.driver.get(`file://${htmlFile}`);
-    const title = await chrome.driver.getTitle();
-    chai.expect(title).to.equal('Successfully Installed');
-  });
-
   it('should receive a ping/pong response', async () => {
     const response = await chrome.server.ping();
     chai.expect(response).to.equal('pong');
@@ -28,5 +21,30 @@ describe('Chrome Browser', function() {
     const userAgent = await chrome.evaluateInBackground(async () => window.navigator.userAgent);
     chai.expect(userAgent).to.be.a('string');
     chai.expect(userAgent).to.have.lengthOf.above(10);
+  });
+
+  it('should handle multiple tabs', async () => {
+    const tabCount = 5;
+    const titles = [];
+    const tabs = await Promise.all([...Array(tabCount).keys()].map(i => {
+      const title = `Tab Title ${i}`;
+      titles.push(title);
+      return chrome.createTab('file:///').then(async tab => {
+        await tab.evaluateInBackground(async (tabId, injectedTitle) => (
+          browser.tabs.executeScript(tabId, {
+            code: `window.stop; document.title = "${injectedTitle}";`,
+            matchAboutBlank: true,
+          })
+        ), tab.tabId, title);
+        return tab;
+      });
+    }));
+    const observedTitles = await Promise.all(tabs.map(tab => (
+      tab.evaluateInBackground(async (tabId) => (
+        (await browser.tabs.get(tabId)).title
+      ), tab.tabId)
+    )));
+    chai.expect(observedTitles).to.deep.equal(titles);
+    await Promise.all(tabs.map(tab => tab.close()));
   });
 });
