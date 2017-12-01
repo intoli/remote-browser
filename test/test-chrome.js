@@ -22,4 +22,29 @@ describe('Chrome Browser', function() {
     chai.expect(userAgent).to.be.a('string');
     chai.expect(userAgent).to.have.lengthOf.above(10);
   });
+
+  it('should handle multiple tabs', async () => {
+    const tabCount = 5;
+    const titles = [];
+    const tabs = await Promise.all([...Array(tabCount).keys()].map(i => {
+      const title = `Tab Title ${i}`;
+      titles.push(title);
+      return chrome.createTab('file:///').then(async tab => {
+        await tab.evaluateInBackground(async (tabId, injectedTitle) => (
+          browser.tabs.executeScript(tabId, {
+            code: `window.stop; document.title = "${injectedTitle}";`,
+            matchAboutBlank: true,
+          })
+        ), tab.tabId, title);
+        return tab;
+      });
+    }));
+    const observedTitles = await Promise.all(tabs.map(tab => (
+      tab.evaluateInBackground(async (tabId) => (
+        (await browser.tabs.get(tabId)).title
+      ), tab.tabId)
+    )));
+    chai.expect(observedTitles).to.deep.equal(titles);
+    await Promise.all(tabs.map(tab => tab.close()));
+  });
 });
