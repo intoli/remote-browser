@@ -1,5 +1,7 @@
 const path = require('path');
 
+const webpack = require('webpack');
+
 
 const options = {
   entry: {
@@ -11,6 +13,10 @@ const options = {
     library: 'feverdream',
     libraryTarget: 'umd',
   },
+  externals: [
+    'express',
+    'ws',
+  ],
   module: {
     rules: [
       {
@@ -26,6 +32,11 @@ const options = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'typeof window': '"undefined"',
+    }),
+  ],
   target: 'node',
   devtool: 'source-map',
   node: {

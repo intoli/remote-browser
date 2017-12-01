@@ -3,6 +3,7 @@ const path = require('path');
 const ChromeExtensionReloader  = require('webpack-chrome-extension-reloader');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 const package = require('../package.json');
 
@@ -29,6 +30,12 @@ const options = {
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
+      {
+        // This bypasses improper namespacing in the polyfill guard.
+        // See: https://github.com/mozilla/webextension-polyfill/issues/68
+        test: require.resolve('webextension-polyfill'),
+        use: 'imports-loader?browser=>undefined',
+      }
     ],
   },
   plugins: [
@@ -41,18 +48,28 @@ const options = {
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '..', 'src', 'extension', 'manifest.json'),
       to: path.join('manifest.json'),
-      transform: (manifest) => (
-        JSON.stringify({
+      transform: (manifest) => {
+        return JSON.stringify({
           description: package.description,
           name: package.name,
           version: package.version,
           ...JSON.parse(manifest),
         }, null, 2)
-      ),
+      },
     }]),
+    new webpack.DefinePlugin({
+      'typeof window': '"object"',
+    }),
+    new webpack.ProvidePlugin({
+      browser: 'webextension-polyfill',
+    }),
   ],
   target: 'web',
   devtool: 'source-map',
+  node: {
+    fs: 'empty',
+    net: 'empty',
+  },
 };
 
 

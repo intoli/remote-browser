@@ -8,28 +8,42 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack",
-    "test": "npm run build && NODE_ENV=test mocha --require babel-core/register",
+    "test": "npm run build && NODE_ENV=test mocha-parallel-tests --require babel-core/register",
+    "test-fast": "NODE_ENV=test mocha-parallel-tests --require babel-core/register --invert --grep Browser",
+    "test-fast-mocha": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.1",
     "eslint": "^4.11.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.8.0",
+    "imports-loader": "^0.7.1",
     "mocha": "^4.0.1",
+    "mocha-parallel-tests": "^1.2.10",
+    "mocha.parallel": "^0.15.3",
+    "source-map-support": "^0.5.0",
+    "webextension-polyfill": "^0.2.1",
     "webpack": "^3.8.1",
     "webpack-chrome-extension-reloader": "^0.6.0"
   },
   "dependencies": {
-    "selenium-webdriver": "^3.6.0"
+    "express": "^4.16.2",
+    "express-ws": "^3.0.0",
+    "portfinder": "^1.0.13",
+    "selenium-webdriver": "^3.6.0",
+    "simple-websocket": "^5.1.0",
+    "ws": "^3.3.2"
   }
 }

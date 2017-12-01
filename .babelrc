@@ -5,6 +5,9 @@
     }
   }]],
   "plugins": [
+      ["transform-builtin-extend", {
+            globals: ["Error"]
+      }],
       "transform-class-properties",
       "transform-object-rest-spread"
   ]
