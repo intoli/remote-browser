@@ -29,6 +29,16 @@ export default class FeverDreamBase {
     [this.tabId] = this.tabIds;
   };
 
+  close = async () => {
+    await this.evaluateInBackground(async tabId => (
+      browser.tabs.remove(tabId)
+    ), this.tabId);
+    this.tabIds.splice(this.tabIds.indexOf(this.tabId));
+    if (!this.tabIds.length) {
+      await this.end();
+    }
+  };
+
   createTab = async (url = 'about:blank') => {
     const tab = new this.constructor(this.options);
     tab.port = this.port;
