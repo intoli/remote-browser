@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => (
   // TODO: stuff...
-  return true;
-});
+  true
+));
