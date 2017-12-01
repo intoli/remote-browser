@@ -41,6 +41,7 @@ export default class FeverDreamBase {
 
   createTab = async (url = 'about:blank') => {
     const tab = new this.constructor(this.options);
+    tab.driver = this.driver;
     tab.port = this.port;
     tab.server = this.server;
     tab.tabIds = this.tabIds;
