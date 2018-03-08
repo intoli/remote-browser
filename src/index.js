@@ -1,8 +1,4 @@
-import FeverDreamChrome from './chrome';
-
-
-export default async (options) => {
-  const feverDream = new FeverDreamChrome(options);
-  await feverDream.initialize();
-  return feverDream;
-};
+export default async options => (
+  // TODO:  Need to export the `Browser` function here.
+  options
+);
