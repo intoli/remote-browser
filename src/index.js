@@ -1,4 +1,4 @@
-export default async (options) => {
+export default async options => (
   // TODO:  Need to export the `Browser` function here.
-  return options;
-};
+  options
+);
