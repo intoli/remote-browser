@@ -12,7 +12,7 @@ describe('Chrome Browser', function() {
     browser = new Browser();
     await browser.launch();
   });
-  after(async () => await browser.end());
+  after(async () => await browser.quit());
 
   it('should receive a ping/pong response', async () => {
     const response = await browser.client.ping();
