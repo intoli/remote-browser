@@ -10,7 +10,7 @@ const options = {
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: '[name].js',
-    library: 'feverdream',
+    library: 'remote-browser',
     libraryTarget: 'umd',
   },
   externals: [
