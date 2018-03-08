@@ -1,7 +1,7 @@
 import chai from 'chai';
 import parallel from 'mocha.parallel';
 
-import { Client, Server } from '../src/connections';
+import { Client, Proxy, Server } from '../src/connections';
 import { TimeoutError } from '../src/errors';
 
 
@@ -12,6 +12,17 @@ const createConnection = async () => {
   await client.connect(port);
 
   return { client, port, server };
+};
+
+
+const createProxiedConnection = async () => {
+  const proxy = new Proxy();
+  const ports = await proxy.listen();
+  const clients = [new Client(), new Client()]
+  await clients[0].connect(ports[0]);
+  await clients[1].connect(ports[1]);
+
+  return { clients, proxy };
 };
 
 
@@ -71,5 +82,16 @@ parallel('Connections', () => {
       error = e;
     }
     chai.expect(error).to.be.instanceof(TimeoutError);
+  });
+});
+
+
+parallel('Proxied Connections', () => {
+  it('should echo messages between clients', async () => {
+    const { clients } = await createProxiedConnection();
+    const sent = 'hello';
+    clients[1].subscribe(async (echoed) => echoed);
+    const received = await clients[0].send(sent);
+    chai.expect(sent).to.equal(received);
   });
 });
