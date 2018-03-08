@@ -1,4 +1,4 @@
-import chai from 'chai';
+import assert from 'assert';
 
 import { Client, Proxy, Server } from '../src/connections';
 import { TimeoutError } from '../src/errors';
@@ -28,12 +28,12 @@ const createProxiedConnection = async () => {
 describe('Connections', () => {
   it('should handle pings from the client', async () => {
     const { client } = await createConnection();
-    chai.expect(await client.ping()).to.equal('pong');
+    assert.equal(await client.ping(), 'pong');
   });
 
   it('should handle pings from the server', async () => {
     const { client } = await createConnection();
-    chai.expect(await client.ping()).to.equal('pong');
+    assert.equal(await client.ping(), 'pong');
   });
 
   it('should echo messages from the client', async () => {
@@ -41,7 +41,7 @@ describe('Connections', () => {
     const sent = 'hello';
     server.subscribe(async (echoed) => echoed);
     const received = await client.send(sent);
-    chai.expect(sent).to.equal(received);
+    assert.equal(sent, received);
   });
 
   it('should handle multiple channels', async () => {
@@ -67,7 +67,7 @@ describe('Connections', () => {
     }
     const messages = await Promise.all(promises);
 
-    chai.expect(messages).to.deep.equal(expectedMessages);
+    assert.deepEqual(messages, expectedMessages);
   });
 
   it('should raise a timeout error waiting for a response', async () => {
@@ -80,7 +80,7 @@ describe('Connections', () => {
     } catch (e) {
       error = e;
     }
-    chai.expect(error).to.be.instanceof(TimeoutError);
+    assert(error instanceof TimeoutError);
   });
 });
 
@@ -91,12 +91,13 @@ describe('Proxied Connections', async () => {
     const sent = 'hello';
     clients[1].subscribe(async (echoed) => echoed);
     const received = await clients[0].send(sent);
-    chai.expect(sent).to.equal(received);
+    assert.equal(sent, received);
   });
 
   it('should handle pings from both clients', async () => {
     const { clients } = await createProxiedConnection();
-    chai.expect(await clients[0].ping()).to.equal('pong');
-    chai.expect(await clients[1].ping()).to.equal('pong');
+
+    assert.equal(await clients[0].ping(), 'pong');
+    assert.equal(await clients[1].ping(), 'pong');
   });
 });
