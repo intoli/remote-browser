@@ -4,7 +4,7 @@ import Client from '../connections/client';
 const findPort = async () => (new Promise((resolve) => {
   const extractPort = (tabId, changeInfo, tab) => {
     const url = tab ? tab.url : tabId;
-    const match = /feverDreamPort=(\d+)/.exec(url);
+    const match = /remoteBrowserPort=(\d+)/.exec(url);
     if (match && match.length > 1) {
       const port = match[1];
       resolve(port);
