@@ -36,4 +36,9 @@ export default class Browser {
 
     await connectionPromise;
   };
+
+  quit = async () => {
+    await this.driver.quit();
+    await this.proxy.close();
+  };
 }
