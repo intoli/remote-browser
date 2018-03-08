@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import parallel from 'mocha.parallel';
 
 import * as errors from '../src/errors';
 import * as common from '../src/common';
@@ -9,8 +8,8 @@ import * as common from '../src/common';
 chai.use(chaiAsPromised);
 
 
-parallel('common', () => {
-  parallel('TimeoutPromise', () => {
+describe('common', () => {
+  describe('TimeoutPromise', () => {
     it('should throw an exception after timeout', () => {
       const promise = new common.TimeoutPromise(() => null, 50);
       chai.expect(promise).to.be.rejectedWith(errors.TimeoutError);

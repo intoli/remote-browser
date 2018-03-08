@@ -1,5 +1,4 @@
 import chai from 'chai';
-import parallel from 'mocha.parallel';
 
 import { Client, Proxy, Server } from '../src/connections';
 import { TimeoutError } from '../src/errors';
@@ -26,7 +25,7 @@ const createProxiedConnection = async () => {
 };
 
 
-parallel('Connections', () => {
+describe('Connections', () => {
   it('should handle pings from the client', async () => {
     const { client } = await createConnection();
     chai.expect(await client.ping()).to.equal('pong');
