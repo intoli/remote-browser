@@ -8,8 +8,8 @@
   "license": "BSD",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack",
-    "test": "npm run build && NODE_ENV=test mocha --require babel-core/register",
-    "test-fast": "NODE_ENV=test mocha --require babel-core/register --invert --grep Browser",
+    "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
+    "test-fast": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
   },
   "devDependencies": {
