@@ -15,7 +15,7 @@ describe('Chrome Browser', function() {
   after(async () => await browser.end());
 
   it('should receive a ping/pong response', async () => {
-    const response = await chrome.client.ping();
+    const response = await browser.client.ping();
     assert.equal(response, 'pong');
   });
 });
