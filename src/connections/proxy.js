@@ -3,10 +3,13 @@ import Server from './server';
 
 export default class Proxy {
   constructor() {
-    this.servers = [
-      new Server(),
-      new Server(),
-    ];
+    this.servers = [0, 1].map((i) => {
+      const server = new Server();
+      server.onData = (data) => {
+        this.servers[(i + 1) % 2].ws.send(data);
+      };
+      return server;
+    });
   }
 
   close = async () => {
