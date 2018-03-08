@@ -100,6 +100,6 @@ export default class ConnectionBase extends EventEmitter {
   };
 
   unsubscribe = (callback, { channel } = {}) => {
-    delete this.subscripions[channel];
+    delete this.subscriptions[channel];
   };
 }
