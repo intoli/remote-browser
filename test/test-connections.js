@@ -86,12 +86,18 @@ parallel('Connections', () => {
 });
 
 
-parallel('Proxied Connections', () => {
+describe('Proxied Connections', async () => {
   it('should echo messages between clients', async () => {
     const { clients } = await createProxiedConnection();
     const sent = 'hello';
     clients[1].subscribe(async (echoed) => echoed);
     const received = await clients[0].send(sent);
     chai.expect(sent).to.equal(received);
+  });
+
+  it('should handle pings from both clients', async () => {
+    const { clients } = await createProxiedConnection();
+    chai.expect(await clients[0].ping()).to.equal('pong');
+    chai.expect(await clients[1].ping()).to.equal('pong');
   });
 });
