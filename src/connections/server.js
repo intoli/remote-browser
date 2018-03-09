@@ -6,6 +6,9 @@ import ConnectionBase from './base';
 
 export default class Server extends ConnectionBase {
   close = async () => (new Promise((resolve, revoke) => {
+    if (this.ws) {
+      this.ws.destroy();
+    }
     this.server.close((error) => {
       if (error) {
         revoke(error);
