@@ -35,6 +35,13 @@ export default class Browser {
     await connectionPromise;
   };
 
+  evaluateInBackground = async (asyncFunction, ...args) => (
+    this.client.send({
+      args,
+      asyncFunction: asyncFunction.toString(),
+    }, { channel: 'evaluateInBackground' })
+  );
+
   quit = async () => {
     await this.driver.quit();
     await this.proxy.close();
