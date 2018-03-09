@@ -18,4 +18,10 @@ describe('Chrome Browser', function() {
     const response = await browser.client.ping();
     assert.equal(response, 'pong');
   });
+
+  it('should execute JavaScript in the background', async () => {
+    const userAgent = await browser.evaluateInBackground(async () => window.navigator.userAgent);
+    assert(typeof userAgent === 'string');
+    assert(userAgent.includes('Chrome') || userAgent.includes('Chromium'));
+  });
 });
