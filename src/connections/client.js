@@ -5,7 +5,9 @@ import ConnectionBase from './base';
 
 export default class Client extends ConnectionBase {
   close = async () => {
-    this.ws.close();
+    if (this.ws) {
+      this.ws.destroy();
+    }
   };
 
   connect = async port => (new Promise((resolve, revoke) => {

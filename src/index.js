@@ -1,4 +1,4 @@
-export default async options => (
-  // TODO:  Need to export the `Browser` function here.
-  options
-);
+import Browser from './browser';
+
+
+export default Browser;
