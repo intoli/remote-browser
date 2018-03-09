@@ -22,9 +22,7 @@ export default class Browser {
     const connectionPromise = new Promise((resolve) => {
       const channel = 'initialConnection';
       const handleInitialConnection = () => {
-        console.log('unsubscript?');
         this.client.unsubscribe(handleInitialConnection, { channel });
-        console.log('done');
         resolve();
       };
       this.client.subscribe(handleInitialConnection, { channel });
