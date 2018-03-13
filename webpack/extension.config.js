@@ -57,6 +57,11 @@ const options = {
         }, null, 2)
       },
     }]),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '..', 'src', 'extension', 'img', '*.png'),
+      to: path.join('img', '[name].[ext]'),
+      toType: 'template',
+    }]),
     new webpack.DefinePlugin({
       'typeof window': '"object"',
     }),
