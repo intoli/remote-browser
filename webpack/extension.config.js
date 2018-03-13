@@ -59,6 +59,11 @@ const options = {
       },
     }]),
     new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '..', 'src', 'extension', '*.html'),
+      to: '[name].[ext]',
+      toType: 'template',
+    }]),
+    new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '..', 'src', 'extension', 'img', '*.png'),
       to: path.join('img', '[name].[ext]'),
       toType: 'template',
