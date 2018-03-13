@@ -10,7 +10,7 @@ describe('Chrome Browser', function() {
   let browser;
   before(async () => {
     browser = new Browser();
-    await browser.launch();
+    await browser.launch('chrome');
   });
   after(async () => await browser.quit());
 
