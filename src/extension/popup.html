@@ -1,7 +1,30 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" href="popup.css">
+  </head>
   <body>
-
+    <p>Enter a host and port to connect to remote browser.<p>
+    <div id="form-container">
+      <input
+        id="host"
+        name="host"
+        type="url"
+        value="http://localhost"
+      />
+      <input
+        id="port"
+        name="port"
+        type="number"
+        value="9001"
+      />
+      <button
+        id="connect"
+        type="button"
+      >
+        Connect
+      </button>
+    </div>
     <script type="text/javascript" src="popup.js"></script>
   </body>
 </html>
