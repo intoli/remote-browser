@@ -19,8 +19,11 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: install-geckodriver
-          command: 'curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.20.0/geckodriver-v0.20.0-linux64.tar.gz" | tar -zxC node_modules/.bin/'
+          name: install-firefox-and- geckodriver
+          command: |
+            curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.20.0/geckodriver-v0.20.0-linux64.tar.gz" | tar -zxC node_modules/.bin/
+            curl -L "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" | sudo tar -C /opt -jx
+            sudo ln -s /opt/firefox/firefox node_modules/.bin/firefox
       - run:
           name: test
           command: yarn test
