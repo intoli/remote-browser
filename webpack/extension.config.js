@@ -12,6 +12,7 @@ const options = {
   entry: {
     'background': path.resolve(__dirname, '..', 'src', 'extension', 'background.js'),
     'content': path.resolve(__dirname, '..', 'src', 'extension', 'content.js'),
+    'popup': path.resolve(__dirname, '..', 'src', 'extension', 'popup.js'),
   },
   output: {
     path: path.resolve(__dirname, '..', 'dist', 'extension'),
