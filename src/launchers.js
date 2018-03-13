@@ -2,7 +2,7 @@ import path from 'path';
 
 import { Builder } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
-import firefox from 'selenium-webdriver/firefox';
+import { Command } from 'selenium-webdriver/lib/command';
 
 
 const extension = path.resolve(__dirname, 'extension');
@@ -26,7 +26,7 @@ export const launchFirefox = async (url) => {
     .forBrowser('firefox')
     .build();
 
-  const command = new firefox.command.Command(firefox.ExtensionCommand.INSTALL_ADDON)
+  const command = new Command('install addon')
     .setParameter('path', extension)
     .setParameter('temporary', true);
   await driver.execute(command);
