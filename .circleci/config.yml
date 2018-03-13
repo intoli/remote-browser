@@ -19,5 +19,8 @@ jobs:
           paths:
             - ./node_modules
       - run:
+          name: install-geckodriver
+          command: 'curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.20.0/geckodriver-v0.20.0-linux64.tar.gz" | tar -zxC node_modules/.bin/'
+      - run:
           name: test
           command: yarn test
