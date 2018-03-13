@@ -5,12 +5,12 @@ import 'source-map-support/register'
 import Browser from '../dist';
 
 
-describe('Chrome Browser', function() {
+describe('Firefox Browser', function() {
   this.timeout(15000);
   let browser;
   before(async () => {
     browser = new Browser();
-    await browser.launch('chrome');
+    await browser.launch('firefox');
   });
   after(async () => await browser.quit());
 
@@ -22,6 +22,6 @@ describe('Chrome Browser', function() {
   it('should execute JavaScript in the background', async () => {
     const userAgent = await browser.evaluateInBackground(async () => window.navigator.userAgent);
     assert(typeof userAgent === 'string');
-    assert(userAgent.includes('Chrome') || userAgent.includes('Chromium'));
+    assert(userAgent.includes('Firefox'));
   });
 });

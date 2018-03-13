@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import { Client, Proxy } from './connections';
-import launchChrome from './launchers';
+import { launchChrome, launchFirefox } from './launchers';
 
 
 export default class Browser {
@@ -10,7 +10,11 @@ export default class Browser {
   }
 
   launch = async (browser = 'chrome') => {
-    assert(browser === 'chrome', 'Only Chrome is supported right now.');
+    assert(
+      ['chrome', 'firefox'].includes(browser),
+      'Only Chrome and Firefox are supported right now.',
+    );
+    const launch = (browser === 'chrome' ? launchChrome : launchFirefox);
 
     // Set up the proxy and connect to it.
     this.proxy = new Proxy();
@@ -30,7 +34,7 @@ export default class Browser {
 
     // Launch the browser with the correct arguments.
     const url = `file:///?remoteBrowserPort=${this.ports[1]}`;
-    this.driver = await launchChrome(url);
+    this.driver = await launch(url);
 
     await connectionPromise;
   };

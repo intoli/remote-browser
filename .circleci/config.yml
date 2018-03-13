@@ -1,23 +1,29 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/feverdream
+    working_directory: ~/remote-browser
     docker:
       - image: circleci/node:latest-browsers
     steps:
       - checkout
       - run:
-          name: update-yarn
+          name: Update Yarn
           command: 'sudo npm install -g yarn@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
-          name: install-dependencies
+          name: Install Dependencies
           command: yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
       - run:
-          name: test
+          name: Install Firefox and Geckodriver
+          command: |
+            curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.20.0/geckodriver-v0.20.0-linux64.tar.gz" | tar -zxC node_modules/.bin/
+            curl -L "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" | sudo tar -C /opt -jx
+            sudo ln -s /opt/firefox/firefox node_modules/.bin/firefox
+      - run:
+          name: Run Tests
           command: yarn test
