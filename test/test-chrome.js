@@ -6,7 +6,7 @@ import Browser from '../dist';
 
 
 describe('Chrome Browser', function() {
-  this.timeout(5000);
+  this.timeout(15000);
   let browser;
   before(async () => {
     browser = new Browser();
