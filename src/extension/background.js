@@ -10,6 +10,28 @@ class Background {
       eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
     ), { channel: 'evaluateInBackground' });
 
+    // Emit and handle connection status events.
+    this.connectionStatus = 'disconnected';
+    this.client.on('connection', () => {
+      this.connectionStatus = 'connected';
+      this.broadcastConnectionStatus();
+    });
+    this.client.on('close', () => {
+      this.connectionStatus = 'disconnected';
+      this.broadcastConnectionStatus();
+    });
+    this.client.on('error', () => {
+      this.connectionStatus = 'error';
+      this.broadcastConnectionStatus();
+    });
+
+    // Listen for connection status requests from the popup.
+    browser.runtime.onMessage.addListener((request) => {
+      if (request.channel === 'connectionStatusRequest') {
+        this.broadcastConnectionStatus();
+      }
+    });
+
     // Listen for connection requests from the popup browser action.
     browser.runtime.onMessage.addListener(async (request) => {
       if (request.channel === 'connectionRequest') {
@@ -17,6 +39,13 @@ class Background {
       }
     });
   }
+
+  broadcastConnectionStatus = () => {
+    browser.runtime.sendMessage({
+      channel: 'connectionStatus',
+      connectionStatus: this.connectionStatus,
+    });
+  };
 
   connect = async (port, host = 'ws://localhost') => {
     await this.client.connect(port, host);
