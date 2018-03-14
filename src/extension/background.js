@@ -5,10 +5,14 @@ class Background {
   constructor() {
     this.client = new Client();
 
+    // Handle evaluation requests.
     this.client.subscribe(async ({ args, asyncFunction }) => (
       // eslint-disable-next-line no-eval
       eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
     ), { channel: 'evaluateInBackground' });
+    this.client.subscribe(async ({ args, asyncFunction, tabId }) => (
+      browser.tabs.sendMessage(tabId, { args, asyncFunction, channel: 'evaluateInContent' })
+    ), { channel: 'evaluateInContent' });
 
     // Emit and handle connection status events.
     this.connectionStatus = 'disconnected';

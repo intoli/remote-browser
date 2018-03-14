@@ -16,6 +16,14 @@ export default class Browser {
     }, { channel: 'evaluateInBackground' })
   );
 
+  evaluateInContent = async (tabId, asyncFunction, ...args) => (
+    this.client.send({
+      args,
+      asyncFunction: asyncFunction.toString(),
+      tabId,
+    }, { channel: 'evaluateInContent' })
+  );
+
   launch = async (browser = 'chrome') => {
     assert(
       ['chrome', 'firefox'].includes(browser),
