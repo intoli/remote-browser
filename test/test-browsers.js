@@ -68,5 +68,13 @@ import Browser from '../dist';
       ));
       assert.equal(title, 'Blank Page');
     });
+    it('should evaluate JavaScript in the background context when called as a function', async () => {
+      const userAgent = await browser(async (prefix) => (
+        prefix + window.navigator.userAgent
+      ), 'USER-AGENT: ');
+      assert(typeof userAgent === 'string');
+      assert(userAgent.includes(browserName));
+      assert(userAgent.startsWith('USER-AGENT: '));
+    });
   });
 });
