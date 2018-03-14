@@ -4,26 +4,38 @@
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <p>Enter a host and port to connect to remote browser.<p>
-    <div id="form-container">
-      <input
-        id="host"
-        name="host"
-        type="url"
-        value="ws://localhost"
-      />
-      <input
-        id="port"
-        name="port"
-        type="number"
-        value="8001"
-      />
-      <button
-        id="connect"
-        type="button"
-      >
-        Connect
-      </button>
+    <div id="status-container" class="disconnected">
+      <p id="error-message" class="hide-disconnected hide-connected">Something went wrong. Please check the host and port, then try again.</p>
+      <p class="hide-connected">Enter a host and port to connect to remote browser.</p>
+      <div id="form-container" class="hide-connected">
+        <input
+          id="host"
+          name="host"
+          type="url"
+          value="ws://localhost"
+        />
+        <input
+          id="port"
+          name="port"
+          type="number"
+          value="8001"
+        />
+        <button
+          id="connect"
+          type="button"
+        >
+          Connect
+        </button>
+      </div>
+      <p class="hide-error hide-disconnected">You are currently connected to a remote browser client!</p>
+      <div id="disconnect-form-container" class="hide-error hide-disconnected">
+        <button
+          id = "disconnect"
+          type="button"
+        >
+          Disconnect
+        </button>
+      </div>
     </div>
     <script type="text/javascript" src="popup.js"></script>
   </body>

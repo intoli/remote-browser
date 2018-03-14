@@ -2,6 +2,16 @@
   display: flex;
 }
 
+#status-container.connected .hide-connected,
+#status-container.disconnected .hide-disconnected,
+#status-container.error .hide-error {
+  display: none;
+}
+
+#error-message {
+  color: red;
+}
+
 p {
   width: 100%;
 }
@@ -20,4 +30,9 @@ input {
 
 #connect {
   flex: 0 0 auto;
+}
+
+#disconnect {
+  display: block;
+  margin: 0 auto;
 }
