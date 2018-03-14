@@ -9,6 +9,21 @@ export default class Browser {
     this.options = options;
   }
 
+  evaluateInBackground = async (asyncFunction, ...args) => (
+    this.client.send({
+      args,
+      asyncFunction: asyncFunction.toString(),
+    }, { channel: 'evaluateInBackground' })
+  );
+
+  evaluateInContent = async (tabId, asyncFunction, ...args) => (
+    this.client.send({
+      args,
+      asyncFunction: asyncFunction.toString(),
+      tabId,
+    }, { channel: 'evaluateInContent' })
+  );
+
   launch = async (browser = 'chrome') => {
     assert(
       ['chrome', 'firefox'].includes(browser),
@@ -45,13 +60,6 @@ export default class Browser {
 
     return this.ports[1];
   };
-
-  evaluateInBackground = async (asyncFunction, ...args) => (
-    this.client.send({
-      args,
-      asyncFunction: asyncFunction.toString(),
-    }, { channel: 'evaluateInBackground' })
-  );
 
   quit = async () => {
     await this.driver.quit();

@@ -5,10 +5,25 @@ class Background {
   constructor() {
     this.client = new Client();
 
+    // Maintain a registry of open ports with the content scripts.
+    this.tabMessageId = 0;
+    this.tabMessageResolves = {};
+    this.tabPorts = {};
+    this.tabPortResolves = {};
+    browser.runtime.onConnect.addListener((port) => {
+      if (port.name === 'contentScriptConnection') {
+        this.addTabPort(port);
+      }
+    });
+
+    // Handle evaluation requests.
     this.client.subscribe(async ({ args, asyncFunction }) => (
       // eslint-disable-next-line no-eval
       eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
     ), { channel: 'evaluateInBackground' });
+    this.client.subscribe(async ({ args, asyncFunction, tabId }) => (
+      this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' })
+    ), { channel: 'evaluateInContent' });
 
     // Emit and handle connection status events.
     this.connectionStatus = 'disconnected';
@@ -44,6 +59,32 @@ class Background {
       }
     });
   }
+
+  addTabPort = (port) => {
+    // Store the port.
+    const tabId = port.sender.tab.id;
+    this.tabPorts[tabId] = port;
+
+    // Handle incoming messages.
+    port.onMessage.addListener((request) => {
+      const resolve = this.tabMessageResolves[request.id];
+      if (resolve) {
+        resolve(request.message);
+        delete this.tabMessageResolves[request.id];
+      }
+    });
+
+    // Handle any promise resolutions that are waiting for this port.
+    if (this.tabPortResolves[tabId]) {
+      this.tabPortResolves[tabId].forEach(resolve => resolve(port));
+      delete this.tabPortResolves[tabId];
+    }
+
+    // Handle disconnects, this will happen on every page navigation.
+    port.onDisconnect.addListener(() => {
+      delete this.tabPorts[tabId];
+    });
+  };
 
   broadcastConnectionStatus = () => {
     browser.runtime.sendMessage({
@@ -81,6 +122,27 @@ class Background {
     browser.tabs.onUpdated.addListener(extractPort);
     browser.tabs.getCurrent().then(extractPort);
   }));
+
+  getTabPort = async (tabId) => {
+    const port = this.tabPorts[tabId];
+    if (port) {
+      return port;
+    }
+    return new Promise((resolve) => {
+      this.tabPortResolves[tabId] = this.tabPortResolves[tabId] || [];
+      this.tabPortResolves[tabId].push(resolve);
+    });
+  };
+
+  sendToTab = async (tabId, message) => {
+    const port = await this.getTabPort(tabId);
+    this.tabMessageId += 1;
+    const id = this.tabMessageId;
+    return new Promise((resolve) => {
+      this.tabMessageResolves[id] = resolve;
+      port.postMessage({ id, message });
+    });
+  };
 }
 
 
