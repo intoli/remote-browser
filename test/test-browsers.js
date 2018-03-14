@@ -43,12 +43,6 @@ import Browser from '../dist';
     });
 
     it('should evaluate JavaScript in the content context', async () => {
-      if (browserName === 'Firefox') {
-        // Firefox doesn't support file URLs, see:
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=1266960
-        return;
-      }
-
       // Get the current tab ID.
       const tabId = (await browser.evaluateInBackground(async () => (
         (await browser.tabs.query({ active: true })).map(tab => tab.id)
