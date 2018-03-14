@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { Client, ConnectionProxy } from './connections';
+import { RemoteError } from './errors';
 import { launchChrome, launchFirefox } from './launchers';
 
 
@@ -27,12 +28,18 @@ export default class Browser extends CallableProxy {
     this.options = options;
   }
 
-  evaluateInBackground = async (asyncFunction, ...args) => (
-    this.client.send({
+  evaluateInBackground = async (asyncFunction, ...args) => {
+    const { error, result } = await this.client.send({
       args,
       asyncFunction: asyncFunction.toString(),
-    }, { channel: 'evaluateInBackground' })
-  );
+    }, { channel: 'evaluateInBackground' });
+
+    if (error) {
+      throw new RemoteError(error.remoteError);
+    }
+
+    return result;
+  };
 
   evaluateInContent = async (tabId, asyncFunction, ...args) => (
     this.client.send({

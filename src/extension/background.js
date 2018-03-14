@@ -1,4 +1,5 @@
 import Client from '../connections/client';
+import { RemoteError } from '../errors';
 
 
 class Background {
@@ -18,8 +19,11 @@ class Background {
 
     // Handle evaluation requests.
     this.client.subscribe(async ({ args, asyncFunction }) => (
-      // eslint-disable-next-line no-eval
-      eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
+      Promise.resolve()
+        // eslint-disable-next-line no-eval
+        .then(() => eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`))
+        .then(result => ({ result }))
+        .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInBackground' });
     this.client.subscribe(async ({ args, asyncFunction, tabId }) => (
       this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' })
