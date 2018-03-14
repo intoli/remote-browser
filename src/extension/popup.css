@@ -32,6 +32,10 @@ input {
   flex: 0 0 auto;
 }
 
+#connected-message {
+  white-space: nowrap;
+}
+
 #disconnect {
   display: block;
   margin: 0 auto;
