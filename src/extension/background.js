@@ -26,7 +26,11 @@ class Background {
         .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInBackground' });
     this.client.subscribe(async ({ args, asyncFunction, tabId }) => (
-      this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' })
+      Promise.resolve()
+        // eslint-disable-next-line no-eval
+        .then(() => this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' }))
+        .then(result => ({ result }))
+        .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInContent' });
 
     // Emit and handle connection status events.

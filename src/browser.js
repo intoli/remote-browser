@@ -41,13 +41,19 @@ export default class Browser extends CallableProxy {
     return result;
   };
 
-  evaluateInContent = async (tabId, asyncFunction, ...args) => (
-    this.client.send({
+  evaluateInContent = async (tabId, asyncFunction, ...args) => {
+    const { error, result } = await this.client.send({
       args,
       asyncFunction: asyncFunction.toString(),
       tabId,
-    }, { channel: 'evaluateInContent' })
-  );
+    }, { channel: 'evaluateInContent' });
+
+    if (error) {
+      throw new RemoteError(error.remoteError);
+    }
+
+    return result;
+  };
 
   launch = async (browser = 'chrome') => {
     assert(
