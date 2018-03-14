@@ -1,4 +1,5 @@
 const connectButton = document.getElementById('connect');
+const disconnectButton = document.getElementById('disconnect');
 const hostInput = document.getElementById('host');
 const portInput = document.getElementById('port');
 const statusContainerDiv = document.getElementById('status-container');
@@ -22,5 +23,12 @@ connectButton.addEventListener('click', () => {
     channel: 'connectionRequest',
     host: hostInput.value,
     port: parseInt(portInput.value, 10),
+  });
+});
+
+
+disconnectButton.addEventListener('click', () => {
+  browser.runtime.sendMessage({
+    channel: 'disconnectionRequest',
   });
 });

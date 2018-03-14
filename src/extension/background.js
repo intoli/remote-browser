@@ -38,6 +38,11 @@ class Background {
         await this.connect(request.port, request.host);
       }
     });
+    browser.runtime.onMessage.addListener(async (request) => {
+      if (request.channel === 'disconnectionRequest') {
+        await this.client.close();
+      }
+    });
   }
 
   broadcastConnectionStatus = () => {
