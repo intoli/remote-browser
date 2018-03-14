@@ -16,6 +16,17 @@ export default class Browser {
     );
     const launch = (browser === 'chrome' ? launchChrome : launchFirefox);
 
+    // Prepare the client and the proxy.
+    await this.listen();
+
+    // Launch the browser with the correct arguments.
+    const url = `file:///?remoteBrowserPort=${this.ports[1]}`;
+    this.driver = await launch(url);
+
+    await this.connection;
+  };
+
+  listen = async () => {
     // Set up the proxy and connect to it.
     this.proxy = new Proxy();
     this.ports = await this.proxy.listen();
@@ -23,7 +34,7 @@ export default class Browser {
     await this.client.connect(this.ports[0]);
 
     // Prepare for the initial connection from the browser.
-    const connectionPromise = new Promise((resolve) => {
+    this.connection = new Promise((resolve) => {
       const channel = 'initialConnection';
       const handleInitialConnection = () => {
         this.client.unsubscribe(handleInitialConnection, { channel });
@@ -32,11 +43,7 @@ export default class Browser {
       this.client.subscribe(handleInitialConnection, { channel });
     });
 
-    // Launch the browser with the correct arguments.
-    const url = `file:///?remoteBrowserPort=${this.ports[1]}`;
-    this.driver = await launch(url);
-
-    await connectionPromise;
+    return this.ports[1];
   };
 
   evaluateInBackground = async (asyncFunction, ...args) => (
