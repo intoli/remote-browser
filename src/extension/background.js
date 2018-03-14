@@ -53,8 +53,13 @@ class Background {
   };
 
   connect = async (port, host = 'ws://localhost') => {
-    await this.client.connect(port, host);
-    this.client.send(null, { channel: 'initialConnection' });
+    try {
+      await this.client.connect(port, host);
+      this.client.send(null, { channel: 'initialConnection' });
+    } catch (error) {
+      this.connectionStatus = 'error';
+      this.broadcastConnectionStatus();
+    }
   };
 
   connectOnLaunch = async () => {
