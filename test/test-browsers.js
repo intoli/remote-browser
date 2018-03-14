@@ -6,7 +6,7 @@ import portfinder from 'portfinder';
 
 // We're using the compiled code, so must register the source maps.
 import 'source-map-support/register'
-import Browser from '../dist';
+import Browser, { RemoteError } from '../dist';
 
 
 ['Firefox', 'Chrome'].forEach((browserName) => {
@@ -102,6 +102,18 @@ import Browser from '../dist';
         })
       ));
       assert.equal(title, 'Blank Page');
+    });
+
+    it('should raise a RemoteError if the background evaluation fails', async () => {
+      try {
+        await browser(() => { const variable = nonExistentVariableName; });
+      } catch (error) {
+        assert(error instanceof RemoteError);
+        const { remoteError } = error;
+        assert.equal(remoteError.name, 'ReferenceError');
+        return;
+      }
+      throw new Error('The expected error was not thrown.');
     });
   });
 });
