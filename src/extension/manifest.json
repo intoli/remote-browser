@@ -5,6 +5,13 @@
       "id": "feverdream@intoli.com"
     }
   },
+  "browser_action": {
+    "default_icon": {
+      "32": "img/icon-32x32.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "Remote Browser"
+  },
   "content_scripts": [
     {
       "matches": [

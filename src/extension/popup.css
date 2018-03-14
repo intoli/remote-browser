@@ -1,0 +1,42 @@
+#form-container {
+  display: flex;
+}
+
+#status-container.connected .hide-connected,
+#status-container.disconnected .hide-disconnected,
+#status-container.error .hide-error {
+  display: none;
+}
+
+#error-message {
+  color: red;
+}
+
+p {
+  width: 100%;
+}
+
+input {
+  margin-right: 0.5em;
+}
+
+#host {
+  flex: 3 0 2em;
+}
+
+#port {
+  width: 6em;
+}
+
+#connect {
+  flex: 0 0 auto;
+}
+
+#connected-message {
+  white-space: nowrap;
+}
+
+#disconnect {
+  display: block;
+  margin: 0 auto;
+}

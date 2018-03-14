@@ -10,16 +10,16 @@ export default class Client extends ConnectionBase {
     }
   };
 
-  connect = async port => (new Promise((resolve, revoke) => {
+  connect = async (port, host = 'ws://localhost') => (new Promise((resolve, revoke) => {
     this.port = port;
-    const ws = this.attachWebSocket(new WebSocket(`ws://localhost:${port}/`));
+    const ws = this.attachWebSocket(new WebSocket(`${host}:${port}/`));
     let connected = false;
-    ws.on('connect', () => {
+    ws.once('connect', () => {
       this.emit('connection');
       connected = true;
       resolve();
     });
-    ws.on('error', (error) => {
+    ws.once('error', (error) => {
       if (!connected) {
         revoke(error);
       }

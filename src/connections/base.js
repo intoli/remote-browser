@@ -21,6 +21,11 @@ export default class ConnectionBase extends EventEmitter {
     }
     this.ws = ws;
     this.ws.on('data', this.onData);
+
+    // The `connection` events are handled by the derived classes.
+    this.ws.on('close', () => { this.emit('close'); });
+    this.ws.on('error', (error) => { this.emit('error', error); });
+
     return ws;
   };
 

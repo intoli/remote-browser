@@ -12,6 +12,7 @@ const options = {
   entry: {
     'background': path.resolve(__dirname, '..', 'src', 'extension', 'background.js'),
     'content': path.resolve(__dirname, '..', 'src', 'extension', 'content.js'),
+    'popup': path.resolve(__dirname, '..', 'src', 'extension', 'popup.js'),
   },
   output: {
     path: path.resolve(__dirname, '..', 'dist', 'extension'),
@@ -56,6 +57,21 @@ const options = {
           ...JSON.parse(manifest),
         }, null, 2)
       },
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '..', 'src', 'extension', '*.html'),
+      to: '[name].[ext]',
+      toType: 'template',
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '..', 'src', 'extension', '*.css'),
+      to: '[name].[ext]',
+      toType: 'template',
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '..', 'src', 'extension', 'img', '*.png'),
+      to: path.join('img', '[name].[ext]'),
+      toType: 'template',
     }]),
     new webpack.DefinePlugin({
       'typeof window': '"object"',
