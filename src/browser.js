@@ -4,8 +4,21 @@ import { Client, ConnectionProxy } from './connections';
 import { launchChrome, launchFirefox } from './launchers';
 
 
-export default class Browser {
+class CallableProxy extends Function {
+  constructor(handler) {
+    super();
+    return new Proxy(this, handler);
+  }
+}
+
+
+export default class Browser extends CallableProxy {
   constructor(options) {
+    super({
+      apply: (target, thisArg, argumentsList) => (
+        this.evaluateInBackground(...argumentsList)
+      ),
+    });
     this.options = options;
   }
 
