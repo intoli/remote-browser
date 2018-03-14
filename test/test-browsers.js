@@ -1,22 +1,35 @@
 import assert from 'assert';
 import path from 'path';
 
+import express from 'express';
+import portfinder from 'portfinder';
+
 // We're using the compiled code, so must register the source maps.
 import 'source-map-support/register'
 import Browser from '../dist';
-
-const blankPageUrl = `file://${path.resolve(__dirname, 'data', 'blank-page.html')}`;
 
 
 ['Firefox', 'Chrome'].forEach((browserName) => {
   describe(`${browserName} Browser`, function() {
     this.timeout(15000);
+    let app;
+    let appServer;
     let browser;
+    let urlPrefix;
+    const blankPagePath = path.resolve(__dirname, 'data', 'blank-page.html');
     before(async () => {
       browser = new Browser();
       await browser.launch(browserName.toLowerCase());
+      const port = await portfinder.getPortPromise();
+      urlPrefix = `http://localhost:${port}`;
+      app = express();
+      app.use(express.static('/'));
+      await new Promise((resolve) => { appServer = app.listen(port, resolve); });
     });
-    after(async () => await browser.quit());
+    after(async () => {
+      await browser.quit()
+      await new Promise(resolve => appServer.close(resolve));
+    });
 
     it('should receive a ping/pong response', async () => {
       const response = await browser.client.ping();
@@ -43,6 +56,7 @@ const blankPageUrl = `file://${path.resolve(__dirname, 'data', 'blank-page.html'
       assert.equal(typeof tabId, 'number');
 
       // Navigate to the test page.
+      const blankPageUrl = urlPrefix + blankPagePath;
       await browser.evaluateInBackground(async (tabId, blankPageUrl) => (
         browser.tabs.update({ url: blankPageUrl })
       ), tabId, blankPageUrl);
