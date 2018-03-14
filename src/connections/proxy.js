@@ -1,7 +1,7 @@
 import Server from './server';
 
 
-export default class Proxy {
+export default class ConnectionProxy {
   constructor() {
     this.servers = [0, 1].map((i) => {
       const server = new Server();

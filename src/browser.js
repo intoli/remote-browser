@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { Client, Proxy } from './connections';
+import { Client, ConnectionProxy } from './connections';
 import { launchChrome, launchFirefox } from './launchers';
 
 
@@ -43,7 +43,7 @@ export default class Browser {
 
   listen = async () => {
     // Set up the proxy and connect to it.
-    this.proxy = new Proxy();
+    this.proxy = new ConnectionProxy();
     this.ports = await this.proxy.listen();
     this.client = new Client();
     await this.client.connect(this.ports[0]);
