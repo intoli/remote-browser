@@ -1,11 +1,29 @@
 import assert from 'assert';
 
-import { Client, Proxy } from './connections';
+import { Client, ConnectionProxy } from './connections';
 import { launchChrome, launchFirefox } from './launchers';
 
 
-export default class Browser {
+class CallableProxy extends Function {
+  constructor(handler) {
+    super();
+    return new Proxy(this, handler);
+  }
+}
+
+
+export default class Browser extends CallableProxy {
   constructor(options) {
+    super({
+      apply: (target, thisArg, argumentsList) => (
+        this.evaluateInBackground(...argumentsList)
+      ),
+      get: (target, name) => (
+        name.match(/^\d+$/) ?
+          (...args) => this.evaluateInContent(parseInt(name, 10), ...args) :
+          Reflect.get(target, name)
+      ),
+    });
     this.options = options;
   }
 
@@ -43,7 +61,7 @@ export default class Browser {
 
   listen = async () => {
     // Set up the proxy and connect to it.
-    this.proxy = new Proxy();
+    this.proxy = new ConnectionProxy();
     this.ports = await this.proxy.listen();
     this.client = new Client();
     await this.client.connect(this.ports[0]);

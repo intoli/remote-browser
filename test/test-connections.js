@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { Client, Proxy, Server } from '../src/connections';
+import { Client, ConnectionProxy, Server } from '../src/connections';
 import { TimeoutError } from '../src/errors';
 
 
@@ -15,7 +15,7 @@ const createConnection = async () => {
 
 
 const createProxiedConnection = async () => {
-  const proxy = new Proxy();
+  const proxy = new ConnectionProxy();
   const ports = await proxy.listen();
   const clients = [new Client(), new Client()]
   await clients[0].connect(ports[0]);

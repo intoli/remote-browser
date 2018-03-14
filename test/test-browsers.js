@@ -68,5 +68,40 @@ import Browser from '../dist';
       ));
       assert.equal(title, 'Blank Page');
     });
+
+    it('should evaluate JavaScript in the background context when called as a function', async () => {
+      const userAgent = await browser(async (prefix) => (
+        prefix + window.navigator.userAgent
+      ), 'USER-AGENT: ');
+      assert(typeof userAgent === 'string');
+      assert(userAgent.includes(browserName));
+      assert(userAgent.startsWith('USER-AGENT: '));
+    });
+
+    it('should evaluate JavaScript in the content context when called as a function', async () => {
+      // Get the current tab ID.
+      const tabId = (await browser.evaluateInBackground(async () => (
+        (await browser.tabs.query({ active: true })).map(tab => tab.id)
+      )))[0];
+      assert.equal(typeof tabId, 'number');
+
+      // Navigate to the test page.
+      const blankPageUrl = urlPrefix + blankPagePath;
+      await browser.evaluateInBackground(async (tabId, blankPageUrl) => (
+        browser.tabs.update({ url: blankPageUrl })
+      ), tabId, blankPageUrl);
+
+      // Retrieve the page title.
+      const title = await browser[tabId]( async () => (
+        new Promise((resolve) => {
+          if (['complete', 'loaded'].includes(document.readyState)) {
+            resolve(document.title);
+          } else {
+            document.addEventListener('DOMContentLoaded', () => resolve(document.title));
+          }
+        })
+      ));
+      assert.equal(title, 'Blank Page');
+    });
   });
 });
