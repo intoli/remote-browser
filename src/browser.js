@@ -18,6 +18,11 @@ export default class Browser extends CallableProxy {
       apply: (target, thisArg, argumentsList) => (
         this.evaluateInBackground(...argumentsList)
       ),
+      get: (target, name) => (
+        name.match(/^\d+$/) ?
+          (...args) => this.evaluateInContent(parseInt(name, 10), ...args) :
+          Reflect.get(target, name)
+      ),
     });
     this.options = options;
   }
