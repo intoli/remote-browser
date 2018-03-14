@@ -115,5 +115,20 @@ import Browser, { RemoteError } from '../dist';
       }
       throw new Error('The expected error was not thrown.');
     });
+
+    it('should raise a RemoteError if the content evaluation fails', async () => {
+      const tabId = (await browser.evaluateInBackground(async () => (
+        (await browser.tabs.query({ active: true })).map(tab => tab.id)
+      )))[0];
+      try {
+        await browser[tabId](() => { const variable = nonExistentVariableName; });
+      } catch (error) {
+        assert(error instanceof RemoteError);
+        const { remoteError } = error;
+        assert.equal(remoteError.name, 'ReferenceError');
+        return;
+      }
+      throw new Error('The expected error was not thrown.');
+    });
   });
 });
