@@ -9,6 +9,13 @@ class Background {
       // eslint-disable-next-line no-eval
       eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
     ), { channel: 'evaluateInBackground' });
+
+    // Listen for connection requests from the popup browser action.
+    browser.runtime.onMessage.addListener(async (request) => {
+      if (request.channel === 'connectionRequest') {
+        await this.connect(request.port, request.host);
+      }
+    });
   }
 
   connect = async (port, host = 'ws://localhost') => {
