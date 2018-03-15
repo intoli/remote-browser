@@ -26,8 +26,7 @@
     "scripts": ["background.js"]
   },
   "permissions": [
-    "*://*/*",
-    "file:///*",
+    "<all_urls>",
     "tabs"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
