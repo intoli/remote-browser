@@ -11,6 +11,7 @@ class Background {
     this.tabMessageResolves = {};
     this.tabMessageRevokes = {};
     this.tabPorts = {};
+    this.tabPortPendingRequests = {};
     this.tabPortResolves = {};
     browser.runtime.onConnect.addListener((port) => {
       if (port.name === 'contentScriptConnection') {
@@ -85,6 +86,12 @@ class Background {
       }
       delete this.tabMessageResolves[request.id];
       delete this.tabMessageRevokes[request.id];
+
+      this.tabPortPendingRequests[tabId] = this.tabPortPendingRequests[tabId]
+        .filter(({ id }) => id !== request.id);
+      if (this.tabPortPendingRequests[tabId].length === 0) {
+        delete this.tabPortPendingRequests[tabId];
+      }
     });
 
     // Handle any promise resolutions that are waiting for this port.
@@ -94,8 +101,18 @@ class Background {
     }
 
     // Handle disconnects, this will happen on every page navigation.
-    port.onDisconnect.addListener(() => {
-      delete this.tabPorts[tabId];
+    port.onDisconnect.addListener(async () => {
+      if (this.tabPorts[tabId] === port) {
+        delete this.tabPorts[tabId];
+      }
+
+      // If there are pending requests, we'll need to resend them. The resolve/revoke callbacks will
+      // still be in place, we just need to repost the requests.
+      const pendingRequests = this.tabPortPendingRequests[tabId];
+      if (pendingRequests.length) {
+        const newPort = await this.getTabPort(tabId);
+        pendingRequests.forEach(request => newPort.postMessage(request));
+      }
     });
   };
 
@@ -153,6 +170,10 @@ class Background {
     const id = this.tabMessageId;
     return new Promise((resolve, revoke) => {
       const request = { id, message };
+      // Store this in case the port disconnects before we get a response.
+      this.tabPortPendingRequests[tabId] = this.tabPortPendingRequests[tabId] || [];
+      this.tabPortPendingRequests[tabId].push(request);
+
       this.tabMessageResolves[id] = resolve;
       this.tabMessageRevokes[id] = revoke;
       port.postMessage(request);
