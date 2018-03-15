@@ -157,8 +157,8 @@ import Browser, { RemoteError } from '../dist';
         })
       ));
 
-      // Change the background color to solid red.
-      await browser[tabId](() => { document.body.style['background'] = '#f00'; })
+      // There's a bit of a race condition here, Chrome needs a few milliseconds to actually render.
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Fetch a data URI of the image.
       const dataUri = await browser(async (tabId) => (
