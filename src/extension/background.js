@@ -1,4 +1,5 @@
 import Client from '../connections/client';
+import { RemoteError } from '../errors';
 
 
 class Background {
@@ -8,7 +9,9 @@ class Background {
     // Maintain a registry of open ports with the content scripts.
     this.tabMessageId = 0;
     this.tabMessageResolves = {};
+    this.tabMessageRevokes = {};
     this.tabPorts = {};
+    this.tabPortPendingRequests = {};
     this.tabPortResolves = {};
     browser.runtime.onConnect.addListener((port) => {
       if (port.name === 'contentScriptConnection') {
@@ -18,11 +21,18 @@ class Background {
 
     // Handle evaluation requests.
     this.client.subscribe(async ({ args, asyncFunction }) => (
-      // eslint-disable-next-line no-eval
-      eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`)
+      Promise.resolve()
+        // eslint-disable-next-line no-eval
+        .then(() => eval(`(${asyncFunction}).apply(null, ${JSON.stringify(args)})`))
+        .then(result => ({ result }))
+        .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInBackground' });
     this.client.subscribe(async ({ args, asyncFunction, tabId }) => (
-      this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' })
+      Promise.resolve()
+        // eslint-disable-next-line no-eval
+        .then(() => this.sendToTab(tabId, { args, asyncFunction, channel: 'evaluateInContent' }))
+        .then(result => ({ result }))
+        .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInContent' });
 
     // Emit and handle connection status events.
@@ -68,9 +78,19 @@ class Background {
     // Handle incoming messages.
     port.onMessage.addListener((request) => {
       const resolve = this.tabMessageResolves[request.id];
-      if (resolve) {
+      const revoke = this.tabMessageRevokes[request.id];
+      if (revoke && request.error) {
+        revoke(new RemoteError(JSON.parse(request.error)));
+      } else if (resolve) {
         resolve(request.message);
-        delete this.tabMessageResolves[request.id];
+      }
+      delete this.tabMessageResolves[request.id];
+      delete this.tabMessageRevokes[request.id];
+
+      this.tabPortPendingRequests[tabId] = this.tabPortPendingRequests[tabId]
+        .filter(({ id }) => id !== request.id);
+      if (this.tabPortPendingRequests[tabId].length === 0) {
+        delete this.tabPortPendingRequests[tabId];
       }
     });
 
@@ -81,8 +101,18 @@ class Background {
     }
 
     // Handle disconnects, this will happen on every page navigation.
-    port.onDisconnect.addListener(() => {
-      delete this.tabPorts[tabId];
+    port.onDisconnect.addListener(async () => {
+      if (this.tabPorts[tabId] === port) {
+        delete this.tabPorts[tabId];
+      }
+
+      // If there are pending requests, we'll need to resend them. The resolve/revoke callbacks will
+      // still be in place, we just need to repost the requests.
+      const pendingRequests = this.tabPortPendingRequests[tabId];
+      if (pendingRequests.length) {
+        const newPort = await this.getTabPort(tabId);
+        pendingRequests.forEach(request => newPort.postMessage(request));
+      }
     });
   };
 
@@ -138,9 +168,15 @@ class Background {
     const port = await this.getTabPort(tabId);
     this.tabMessageId += 1;
     const id = this.tabMessageId;
-    return new Promise((resolve) => {
+    return new Promise((resolve, revoke) => {
+      const request = { id, message };
+      // Store this in case the port disconnects before we get a response.
+      this.tabPortPendingRequests[tabId] = this.tabPortPendingRequests[tabId] || [];
+      this.tabPortPendingRequests[tabId].push(request);
+
       this.tabMessageResolves[id] = resolve;
-      port.postMessage({ id, message });
+      this.tabMessageRevokes[id] = revoke;
+      port.postMessage(request);
     });
   };
 }

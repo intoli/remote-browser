@@ -7,6 +7,33 @@ export class ConnectionError extends Error {
   }
 }
 
+
+export class RemoteError extends Error {
+  constructor(error, message) {
+    super(message || error.message);
+    if (error && error.remoteError) {
+      this.remoteError = error.remoteError;
+    } else if (error instanceof Error) {
+      this.remoteError = {};
+      let object = error;
+      while (object instanceof Error) {
+        Object.getOwnPropertyNames(object).forEach((name) => {
+          this.remoteError[name] = error[name];
+        });
+        object = Object.getPrototypeOf(object);
+      }
+    } else {
+      this.remoteError = error;
+    }
+  }
+
+  toJSON = () => ({
+    name: 'RemoteError',
+    remoteError: this.remoteError,
+  });
+}
+
+
 export class TimeoutError extends Error {
   constructor(...params) {
     super(...params);

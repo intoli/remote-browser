@@ -10,8 +10,9 @@ const options = {
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: '[name].js',
-    library: 'remote-browser',
+    library: 'Browser',
     libraryTarget: 'umd',
+    umdNamedDefine: true,
   },
   externals: [
     'express',
