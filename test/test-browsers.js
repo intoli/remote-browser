@@ -18,6 +18,7 @@ import Browser, { RemoteError } from '../dist';
     let browser;
     let urlPrefix;
     const blankPagePath = path.resolve(__dirname, 'data', 'blank-page.html');
+    const redPagePath = path.resolve(__dirname, 'data', 'red-page.html');
     before(async () => {
       browser = new Browser();
       await browser.launch(browserName.toLowerCase());
@@ -139,11 +140,22 @@ import Browser, { RemoteError } from '../dist';
       )))[0];
       assert.equal(typeof tabId, 'number');
 
-      // Navigate to the blank test page.
-      const blankPageUrl = urlPrefix + blankPagePath;
-      await browser(async (tabId, blankPageUrl) => (
-        browser.tabs.update({ url: blankPageUrl })
-      ), tabId, blankPageUrl);
+      // Navigate to the red test page.
+      const redPageUrl = urlPrefix + redPagePath;
+      await browser(async (tabId, redPageUrl) => (
+        browser.tabs.update({ url: redPageUrl })
+      ), tabId, redPageUrl);
+
+      // Wait for the DOM to load.
+      await browser.evaluateInContent(tabId, async () => (
+        new Promise((resolve) => {
+          if (document.readyState === 'complete') {
+            resolve();
+          } else {
+            document.addEventListener('load', resolve);
+          }
+        })
+      ));
 
       // Change the background color to solid red.
       await browser[tabId](() => { document.body.style['background'] = '#f00'; })
