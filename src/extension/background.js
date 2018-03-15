@@ -9,6 +9,7 @@ class Background {
     // Maintain a registry of open ports with the content scripts.
     this.tabMessageId = 0;
     this.tabMessageResolves = {};
+    this.tabMessageRevokes = {};
     this.tabPorts = {};
     this.tabPortResolves = {};
     browser.runtime.onConnect.addListener((port) => {
@@ -76,10 +77,14 @@ class Background {
     // Handle incoming messages.
     port.onMessage.addListener((request) => {
       const resolve = this.tabMessageResolves[request.id];
-      if (resolve) {
+      const revoke = this.tabMessageRevokes[request.id];
+      if (revoke && request.error) {
+        revoke(new RemoteError(JSON.parse(request.error)));
+      } else if (resolve) {
         resolve(request.message);
-        delete this.tabMessageResolves[request.id];
       }
+      delete this.tabMessageResolves[request.id];
+      delete this.tabMessageRevokes[request.id];
     });
 
     // Handle any promise resolutions that are waiting for this port.
@@ -146,9 +151,11 @@ class Background {
     const port = await this.getTabPort(tabId);
     this.tabMessageId += 1;
     const id = this.tabMessageId;
-    return new Promise((resolve) => {
+    return new Promise((resolve, revoke) => {
+      const request = { id, message };
       this.tabMessageResolves[id] = resolve;
-      port.postMessage({ id, message });
+      this.tabMessageRevokes[id] = revoke;
+      port.postMessage(request);
     });
   };
 }
