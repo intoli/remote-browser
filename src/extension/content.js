@@ -1,9 +1,9 @@
 import { RemoteError } from '../errors';
 
 
-const backgroundPort = browser.runtime.connect({ name: 'contentScriptConnection' });
+let backgroundPort;
 
-backgroundPort.onMessage.addListener(({ id, message }) => {
+const handleMessage = ({ id, message }) => {
   if (message.channel === 'evaluateInContent') {
     const { asyncFunction, args } = message;
     Promise.resolve()
@@ -17,4 +17,12 @@ backgroundPort.onMessage.addListener(({ id, message }) => {
         });
       });
   }
-});
+};
+
+const createNewConnection = () => {
+  backgroundPort = browser.runtime.connect({ name: 'contentScriptConnection' });
+  backgroundPort.onDisconnect.addListener(createNewConnection);
+  backgroundPort.onMessage.addListener(handleMessage);
+};
+
+createNewConnection();
