@@ -7,7 +7,7 @@
   "author": "Intoli, LLC <contact@intoli.com>",
   "license": "BSD",
   "scripts": {
-    "build": "NODE_ENV=production webpack --config webpack",
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack",
     "build:web": "NODE_ENV=production webpack --config webpack/web-client.config.js",
     "postinstall": "postinstall-build dist",
     "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
