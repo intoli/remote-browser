@@ -14,12 +14,13 @@ const createConnection = async () => {
 };
 
 
-const createProxiedConnection = async () => {
+const createProxiedConnection = async (sessionId = 'default') => {
   const proxy = new ConnectionProxy();
-  const ports = await proxy.listen();
+  const port = await proxy.listen();
   const clients = [new Client(), new Client()]
-  await clients[0].connect(ports[0]);
-  await clients[1].connect(ports[1]);
+  const url = `http://localhost:${port}/`;
+  await clients[0].connect(url, 'user', sessionId);
+  await clients[1].connect(url, 'extension', sessionId);
 
   return { clients, proxy };
 };
