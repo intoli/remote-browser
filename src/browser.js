@@ -1,5 +1,7 @@
 import assert from 'assert';
 
+import fetch from 'isomorphic-fetch';
+
 import { Client, ConnectionProxy } from './connections';
 import { RemoteError } from './errors';
 import { launchChrome, launchFirefox } from './launchers';
@@ -57,29 +59,65 @@ export default class Browser extends CallableProxy {
 
   launch = async (browser = 'chrome') => {
     assert(
-      ['chrome', 'firefox'].includes(browser),
-      'Only Chrome and Firefox are supported right now.',
+      ['chrome', 'firefox', 'remote'].includes(browser),
+      'Only Chrome, Firefox, and Remote are supported right now.',
     );
+
+    // Handle launching remotely.
+    const webBuild = typeof window !== 'undefined';
+    if (browser === 'remote' || webBuild) {
+      await this.launchRemote();
+      return;
+    }
+
     const launch = (browser === 'chrome' ? launchChrome : launchFirefox);
+    const sessionId = 'default';
 
     // Prepare the client and the proxy.
-    await this.listen();
+    await this.listen(sessionId);
 
     // Launch the browser with the correct arguments.
-    const url = `file:///?remoteBrowserPort=${this.ports[1]}`;
-    this.driver = await launch(url);
+    this.driver = await launch(this.connectionUrl, this.sessionId);
 
     await this.connection;
   };
 
-  listen = async () => {
+  launchRemote = async () => {
+    const secure = typeof window === 'undefined' || window.location.protocol.startsWith('https');
+    const initializationUrl = `http${secure ? 's' : ''}://tour-backend.intoli.com` +
+      '/api/initialize-session';
+    const response = await (await fetch(initializationUrl)).json();
+    this.connectionUrl = response.url;
+    if (!response.url || !response.sessionId) {
+      throw new Error('Invalid initialization response from the tour backend');
+    }
+    if (secure && response.url.startsWith('ws:')) {
+      this.connectionUrl = `wss:${response.url.slice(3)}`;
+    } else if (!secure && response.url.startsWith('wss:')) {
+      this.connectionUrl = `ws:${response.url.slice(4)}`;
+    }
+    this.sessionId = response.sessionId;
+
+    await this.negotiateConnection();
+  };
+
+  listen = async (sessionId = 'default') => {
     // Set up the proxy and connect to it.
     this.proxy = new ConnectionProxy();
-    this.ports = await this.proxy.listen();
-    this.client = new Client();
-    await this.client.connect(this.ports[0]);
+    this.port = await this.proxy.listen();
+    this.connectionUrl = `ws://localhost:${this.port}/`;
+    this.sessionId = sessionId;
 
+    await this.negotiateConnection();
+
+    return this.port;
+  };
+
+  negotiateConnection = async () => {
+    // Note that this function is really for internal use only.
     // Prepare for the initial connection from the browser.
+    this.client = new Client();
+    let proxyConnection;
     this.connection = new Promise((resolve) => {
       const channel = 'initialConnection';
       const handleInitialConnection = () => {
@@ -87,13 +125,31 @@ export default class Browser extends CallableProxy {
         resolve();
       };
       this.client.subscribe(handleInitialConnection, { channel });
+      proxyConnection = this.client.connect(this.connectionUrl, 'user', this.sessionId);
     });
-
-    return this.ports[1];
+    await proxyConnection;
   };
 
   quit = async () => {
-    await this.driver.quit();
-    await this.proxy.close();
+    // Close all of the windows.
+    if (this.client) {
+      // We'll never get a response here, so it needs to be sent off asynchronously.
+      this.evaluateInBackground(async () => (
+        Promise.all((await browser.windows.getAll())
+          .map(({ id }) => browser.windows.remove(id)))
+      ));
+    }
+
+    if (this.driver) {
+      await this.driver.quit();
+    }
+
+    if (this.proxy) {
+      await this.proxy.close();
+    }
+
+    if (this.client) {
+      await this.client.close();
+    }
   };
 }

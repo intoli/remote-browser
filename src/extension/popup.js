@@ -19,10 +19,12 @@ browser.runtime.sendMessage({
 
 
 connectButton.addEventListener('click', () => {
+  const port = parseInt(portInput.value, 10);
+  const url = `${hostInput.value}:${port}`;
   browser.runtime.sendMessage({
     channel: 'connectionRequest',
-    host: hostInput.value,
-    port: parseInt(portInput.value, 10),
+    sessionId: 'default',
+    url,
   });
 });
 

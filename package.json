@@ -40,6 +40,7 @@
   "dependencies": {
     "express": "^4.16.2",
     "express-ws": "^3.0.0",
+    "isomorphic-fetch": "^2.2.1",
     "portfinder": "^1.0.13",
     "postinstall-build": "^5.0.1",
     "selenium-webdriver": "^4.0.0-alpha.1",

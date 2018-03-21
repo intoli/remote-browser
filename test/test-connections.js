@@ -4,56 +4,47 @@ import { Client, ConnectionProxy, Server } from '../src/connections';
 import { TimeoutError } from '../src/errors';
 
 
-const createConnection = async () => {
-  const server = new Server();
-  const port = await server.listen();
-  const client = new Client();
-  await client.connect(port);
-
-  return { client, port, server };
-};
-
-
-const createProxiedConnection = async () => {
+const createProxiedConnection = async (sessionId = 'default') => {
   const proxy = new ConnectionProxy();
-  const ports = await proxy.listen();
+  const port = await proxy.listen();
   const clients = [new Client(), new Client()]
-  await clients[0].connect(ports[0]);
-  await clients[1].connect(ports[1]);
+  const url = `http://localhost:${port}/`;
+  await clients[0].connect(url, 'user', sessionId);
+  await clients[1].connect(url, 'extension', sessionId);
 
   return { clients, proxy };
 };
 
 
-describe('Connections', () => {
-  it('should handle pings from the client', async () => {
-    const { client } = await createConnection();
-    assert.equal(await client.ping(), 'pong');
-  });
-
-  it('should handle pings from the server', async () => {
-    const { client } = await createConnection();
-    assert.equal(await client.ping(), 'pong');
-  });
-
-  it('should echo messages from the client', async () => {
-    const { client, server } = await createConnection();
+describe('Proxied Connections', async () => {
+  it('should echo messages between clients', async () => {
+    const { clients } = await createProxiedConnection();
     const sent = 'hello';
-    server.subscribe(async (echoed) => echoed);
-    const received = await client.send(sent);
+    clients[1].subscribe(async (echoed) => echoed);
+    let received = await clients[0].send(sent);
     assert.equal(sent, received);
+    clients[0].subscribe(async (echoed) => echoed);
+    received = await clients[1].send(sent);
+    assert.equal(sent, received);
+  });
+
+  it('should handle pings from both clients', async () => {
+    const { clients } = await createProxiedConnection();
+
+    assert.equal(await clients[0].ping(), 'pong');
+    assert.equal(await clients[1].ping(), 'pong');
   });
 
   it('should handle multiple channels', async () => {
     const channelCount = 5;
     const messageCount = 100;
 
-    const { client, server } = await createConnection();
+    const { clients } = await createProxiedConnection();
 
     const channels = [];
     for (let i = 0; i < channelCount; i++) {
       const channel = `channel-${i}`;
-      server.subscribe(async (data) => ({ channel, data }), { channel });
+      clients[0].subscribe(async (data) => ({ channel, data }), { channel });
       channels.push(channel);
     }
 
@@ -63,7 +54,7 @@ describe('Connections', () => {
     for (let i = 0; i < messageCount; i++) {
       const channel = channels[i % channelCount];
       expectedMessages.push({ channel, data: i });
-      promises.push(client.send(i, { channel }));
+      promises.push(clients[1].send(i, { channel }));
     }
     const messages = await Promise.all(promises);
 
@@ -71,33 +62,38 @@ describe('Connections', () => {
   });
 
   it('should raise a timeout error waiting for a response', async () => {
-    const { client, server } = await createConnection();
+    const { clients } = await createProxiedConnection();
 
-    server.subscribe(async () => new Promise(() => {}));
+    clients[0].subscribe(async () => new Promise(() => {}));
     let error;
     try {
-      await client.send(null, { timeout: 10 });
+      await clients[1].send(null, { timeout: 10 });
     } catch (e) {
       error = e;
     }
     assert(error instanceof TimeoutError);
   });
-});
 
+  it('should handle connections with multiple session IDs', async () => {
+    const connectionCount = 5;
 
-describe('Proxied Connections', async () => {
-  it('should echo messages between clients', async () => {
-    const { clients } = await createProxiedConnection();
-    const sent = 'hello';
-    clients[1].subscribe(async (echoed) => echoed);
-    const received = await clients[0].send(sent);
-    assert.equal(sent, received);
-  });
+    const unsubscribedClients = []
+    for (let i = 0; i < connectionCount; i++) {
+      const sessionId = `session-${i}`;
+      const { clients } = await createProxiedConnection(sessionId);
 
-  it('should handle pings from both clients', async () => {
-    const { clients } = await createProxiedConnection();
+      clients[1].subscribe(async (data) => ({ sessionId, data }));
+      unsubscribedClients.push(clients[0])
+    }
 
-    assert.equal(await clients[0].ping(), 'pong');
-    assert.equal(await clients[1].ping(), 'pong');
+    const promises = unsubscribedClients.map((client, index) => (
+      client.send(`some-data-${index}`)
+    ));
+
+    const results = await Promise.all(promises);
+    results.forEach(({ data, sessionId }, index) => {
+      assert.equal(unsubscribedClients[index].sessionId, sessionId);
+      assert.equal(data, `some-data-${index}`);
+    });
   });
 });
