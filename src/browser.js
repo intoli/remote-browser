@@ -90,6 +90,9 @@ export default class Browser extends CallableProxy {
       '/api/initialize-session';
     const response = (await fetch(initializationUrl)).json();
     this.connectionUrl = response.url;
+    if (!response.url || !response.sessionId) {
+      throw new Error('Invalid initialization response from the tour backend');
+    }
     if (secure && response.url.startswith('ws:')) {
       this.connectionUrl = `wss:${response.url.slice(3)}`;
     } else if (!secure && response.url.startswith('wss:')) {
