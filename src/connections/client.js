@@ -12,6 +12,7 @@ export default class Client extends ConnectionBase {
 
   connect = async (url, clientType, sessionId = 'default') => (
     new Promise((resolve, revoke) => {
+      this.sessionId = sessionId;
       const ws = new WebSocket(url);
       let connected = false;
       ws.once('connect', () => {
