@@ -25,13 +25,13 @@ const options = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /remote-browser\/node_modules/,
+        include: path.resolve(__dirname, '..', 'src'),
         enforce: 'pre',
         loader: 'eslint-loader',
       },
       {
         test: /\.js$/,
-        exclude: /remote-browser\/node_modules/,
+        include: path.resolve(__dirname, '..', 'src'),
         loader: 'babel-loader',
       },
       ...blacklistedDependencies.map(dependency => ({
