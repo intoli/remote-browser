@@ -131,10 +131,12 @@ export default class Browser extends CallableProxy {
 
   quit = async () => {
     // Close all of the windows.
-    this.evaluateInBackground(async () => (
-      Promise.all((await browser.windows.getAll())
-        .map(({ id }) => browser.windows.remove(id)))
-    ));
+    if (this.client) {
+      await this.evaluateInBackground(async () => (
+        Promise.all((await browser.windows.getAll())
+          .map(({ id }) => browser.windows.remove(id)))
+      ));
+    }
 
     if (this.driver) {
       await this.driver.quit();
