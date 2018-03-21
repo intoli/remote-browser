@@ -5,7 +5,7 @@ const webpack = require('webpack');
 
 // We'll explicitly whitelist the dependencies that we actually want to include.
 const packageJson = require(path.resolve(__dirname, '..', 'package.json'));
-const whitelistedDependencies = ['simple-websocket'];
+const whitelistedDependencies = ['isomorphic-fetch', 'simple-websocket'];
 const blacklistedDependencies = Object.keys(packageJson.dependencies)
   .filter(packageName => !whitelistedDependencies.includes(packageName));
 
