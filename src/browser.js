@@ -83,17 +83,17 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    const secure = typeof window === 'undefined' || window.location.protocol.startswith('https');
+    const secure = typeof window === 'undefined' || window.location.protocol.startsWith('https');
     const initializationUrl = `http${secure ? 's' : ''}://tour-backend.intoli.com` +
       '/api/initialize-session';
-    const response = (await fetch(initializationUrl)).json();
+    const response = await (await fetch(initializationUrl)).json();
     this.connectionUrl = response.url;
     if (!response.url || !response.sessionId) {
       throw new Error('Invalid initialization response from the tour backend');
     }
-    if (secure && response.url.startswith('ws:')) {
+    if (secure && response.url.startsWith('ws:')) {
       this.connectionUrl = `wss:${response.url.slice(3)}`;
-    } else if (!secure && response.url.startswith('wss:')) {
+    } else if (!secure && response.url.startsWith('wss:')) {
       this.connectionUrl = `wsx:${response.url.slice(4)}`;
     }
     this.sessionId = this.sessionId;
