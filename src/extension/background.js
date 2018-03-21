@@ -123,9 +123,9 @@ class Background {
     });
   };
 
-  connect = async (port, host = 'ws://localhost') => {
+  connect = async (url, sessionId = 'default') => {
     try {
-      await this.client.connect(port, host);
+      await this.client.connect(url, 'extension', sessionId);
       this.client.send(null, { channel: 'initialConnection' });
     } catch (error) {
       this.connectionStatus = 'error';
@@ -134,23 +134,26 @@ class Background {
   };
 
   connectOnLaunch = async () => {
-    const port = await this.findPort();
-    await this.connect(port);
+    const { url, sessionId } = await this.findConnectionDetails();
+    await this.connect(url, sessionId);
   };
 
-  findPort = async () => (new Promise((resolve) => {
-    const extractPort = (tabId, changeInfo, tab) => {
+  findConnectionDetails = async () => (new Promise((resolve) => {
+    const extractConnectionDetails = (tabId, changeInfo, tab) => {
       const url = tab ? tab.url : tabId;
-      const match = /remoteBrowserPort=(\d+)/.exec(url);
-      if (match && match.length > 1) {
-        const port = match[1];
-        resolve(port);
-        browser.tabs.onUpdated.removeListener(extractPort);
+      let match = /remoteBrowserSessionId=([^&]*)/.exec(url);
+      const sessionId = match && match.length > 1 && match[1];
+      match = /remoteBrowserUrl=([^&]*)/.exec(url);
+      const connectionUrl = match && match.length > 1 && match[1];
+
+      if (sessionId && connectionUrl) {
+        resolve({ sessionId, url: connectionUrl });
+        browser.tabs.onUpdated.removeListener(extractConnectionDetails);
         browser.tabs.update({ url: 'about:blank' });
       }
     };
-    browser.tabs.onUpdated.addListener(extractPort);
-    browser.tabs.getCurrent().then(extractPort);
+    browser.tabs.onUpdated.addListener(extractConnectionDetails);
+    browser.tabs.getCurrent().then(extractConnectionDetails);
   }));
 
   getTabPort = async (tabId) => {
