@@ -73,4 +73,27 @@ describe('Proxied Connections', async () => {
     }
     assert(error instanceof TimeoutError);
   });
+
+  it('should handle connections with multiple session IDs', async () => {
+    const connectionCount = 5;
+
+    const unsubscribedClients = []
+    for (let i = 0; i < connectionCount; i++) {
+      const sessionId = `session-${i}`;
+      const { clients } = await createProxiedConnection(sessionId);
+
+      clients[1].subscribe(async (data) => ({ sessionId, data }));
+      unsubscribedClients.push(clients[0])
+    }
+
+    const promises = unsubscribedClients.map((client, index) => (
+      client.send(`some-data-${index}`)
+    ));
+
+    const results = await Promise.all(promises);
+    results.forEach(({ data, sessionId }, index) => {
+      assert.equal(unsubscribedClients[index].sessionId, sessionId);
+      assert.equal(data, `some-data-${index}`);
+    });
+  });
 });
