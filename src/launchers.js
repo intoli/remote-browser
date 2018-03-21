@@ -6,7 +6,7 @@ import { Command } from 'selenium-webdriver/lib/command';
 import firefox from 'selenium-webdriver/firefox';
 
 
-const extension = path.resolve(__dirname, 'extension');
+const extension = path && path.resolve && path.resolve(__dirname, 'extension');
 
 
 export const launchChrome = async (url) => {
