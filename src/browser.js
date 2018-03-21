@@ -132,7 +132,8 @@ export default class Browser extends CallableProxy {
   quit = async () => {
     // Close all of the windows.
     if (this.client) {
-      await this.evaluateInBackground(async () => (
+      // We'll never get a response here, so it needs to be sent off asynchronously.
+      this.evaluateInBackground(async () => (
         Promise.all((await browser.windows.getAll())
           .map(({ id }) => browser.windows.remove(id)))
       ));
