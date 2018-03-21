@@ -16,7 +16,7 @@ const options = {
   },
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: '[name].web.js',
+    filename: path.join('web-client', '[name].js'),
     library: 'Browser',
     libraryTarget: 'umd',
     umdNamedDefine: true,
