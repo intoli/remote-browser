@@ -86,7 +86,8 @@ export default class Browser extends CallableProxy {
 
   launchRemote = async () => {
     const secure = typeof window === 'undefined' || window.location.protocol.startswith('https');
-    const initializationUrl = `http${secure ? 's' : ''}://tour-backend.intoli.com/`;
+    const initializationUrl = `http${secure ? 's' : ''}://tour-backend.intoli.com` +
+      '/api/initialize-session';
     const response = (await fetch(initializationUrl)).json();
     this.connectionUrl = response.url;
     if (secure && response.url.startswith('ws:')) {
