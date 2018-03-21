@@ -96,7 +96,7 @@ export default class Browser extends CallableProxy {
     } else if (!secure && response.url.startsWith('wss:')) {
       this.connectionUrl = `wsx:${response.url.slice(4)}`;
     }
-    this.sessionId = this.sessionId;
+    this.sessionId = response.sessionId;
 
     await this.negotiateConnection();
   };
