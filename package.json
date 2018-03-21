@@ -8,6 +8,7 @@
   "license": "BSD",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack",
+    "build:web": "NODE_ENV=production webpack --config webpack/web-client.config.js",
     "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
     "test-fast": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
@@ -29,6 +30,7 @@
     "imports-loader": "^0.7.1",
     "jimp": "^0.2.28",
     "mocha": "^4.0.1",
+    "null-loader": "^0.1.1",
     "source-map-support": "^0.5.0",
     "webextension-polyfill": "^0.2.1",
     "webpack": "^3.8.1",
