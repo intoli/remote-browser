@@ -60,7 +60,7 @@ class Background {
     // Listen for connection requests from the popup browser action.
     browser.runtime.onMessage.addListener(async (request) => {
       if (request.channel === 'connectionRequest') {
-        await this.connect(request.port, request.host);
+        await this.connect(request.url, request.sessionId);
       }
     });
     browser.runtime.onMessage.addListener(async (request) => {
