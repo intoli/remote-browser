@@ -77,9 +77,7 @@ export default class Browser extends CallableProxy {
     await this.listen(sessionId);
 
     // Launch the browser with the correct arguments.
-    const url = `file:///?remoteBrowserUrl=${this.connectionUrl}`
-     + `&remoteBrowserSessionId=${this.sessionId}`;
-    this.driver = await launch(url);
+    this.driver = await launch(this.connectionUrl, this.sessionId);
 
     await this.connection;
   };

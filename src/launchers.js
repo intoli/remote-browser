@@ -9,20 +9,26 @@ import firefox from 'selenium-webdriver/firefox';
 const extension = path && path.resolve && path.resolve(__dirname, 'extension');
 
 
-export const launchChrome = async (url) => {
+const constructFileUrl = (connectionUrl, sessionId) => (
+  `file:///?remoteBrowserUrl=${connectionUrl}&remoteBrowserSessionId=${sessionId}`
+);
+
+
+export const launchChrome = async (connectionUrl, sessionId = 'default') => {
   const driver = await new Builder()
     .forBrowser('chrome')
     .setChromeOptions(new chrome.Options()
       .addArguments([`--load-extension=${extension}`]))
     .build();
 
-  await driver.get(url);
+  const fileUrl = constructFileUrl(connectionUrl, sessionId);
+  await driver.get(fileUrl);
 
   return driver;
 };
 
 
-export const launchFirefox = async (url) => {
+export const launchFirefox = async (connectionUrl, sessionId = 'default') => {
   const driver = await new Builder()
     .forBrowser('firefox')
     .setFirefoxOptions(new firefox.Options()
@@ -34,7 +40,8 @@ export const launchFirefox = async (url) => {
     .setParameter('temporary', true);
   await driver.execute(command);
 
-  await driver.get(url);
+  const fileUrl = constructFileUrl(connectionUrl, sessionId);
+  await driver.get(fileUrl);
 
   return driver;
 };
