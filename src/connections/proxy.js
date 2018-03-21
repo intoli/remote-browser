@@ -17,7 +17,7 @@ export default class ConnectionProxy extends EventEmitter {
     // Terminate all of the existing connections.
     this.clientTypes.forEach((clientType) => {
       Object.values(this.webSockets[clientType]).forEach((ws) => {
-        if (ws.isAlive === 1) {
+        if (ws.readyState === 1) {
           ws.close();
         }
         ws.terminate();
@@ -44,7 +44,7 @@ export default class ConnectionProxy extends EventEmitter {
             // Clean up any existing websockets and store the new one.
             const existingWebSocket = this.webSockets[clientType][sessionId];
             if (existingWebSocket && existingWebSocket !== ws) {
-              if (existingWebSocket.isAlive) {
+              if (existingWebSocket.readyState === 1) {
                 existingWebSocket.close();
               }
               existingWebSocket.terminate();
