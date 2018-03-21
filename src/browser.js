@@ -61,23 +61,27 @@ export default class Browser extends CallableProxy {
       'Only Chrome and Firefox are supported right now.',
     );
     const launch = (browser === 'chrome' ? launchChrome : launchFirefox);
+    const sessionId = 'default';
 
     // Prepare the client and the proxy.
-    await this.listen();
+    await this.listen(sessionId);
 
     // Launch the browser with the correct arguments.
-    const url = `file:///?remoteBrowserPort=${this.ports[1]}`;
+    const url = `file:///?remoteBrowserUrl=${this.connectionUrl}`
+     + `&remoteBrowserSessionId=${this.sessionId}`;
     this.driver = await launch(url);
 
     await this.connection;
   };
 
-  listen = async () => {
+  listen = async (sessionId = 'default') => {
     // Set up the proxy and connect to it.
     this.proxy = new ConnectionProxy();
-    this.ports = await this.proxy.listen();
+    this.port = await this.proxy.listen();
+    this.connectionUrl = `ws://localhost:${this.port}/`;
+    this.sessionId = sessionId;
     this.client = new Client();
-    await this.client.connect(this.ports[0]);
+    await this.client.connect(this.connectionUrl, 'user', sessionId);
 
     // Prepare for the initial connection from the browser.
     this.connection = new Promise((resolve) => {
@@ -89,7 +93,7 @@ export default class Browser extends CallableProxy {
       this.client.subscribe(handleInitialConnection, { channel });
     });
 
-    return this.ports[1];
+    return this.port;
   };
 
   quit = async () => {
