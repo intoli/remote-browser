@@ -5,3 +5,4 @@ export default Browser;
 export { Browser };
 export { ConnectionProxy };
 export * from './errors';
+export * from './launchers';
