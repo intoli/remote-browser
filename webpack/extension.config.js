@@ -22,13 +22,13 @@ const options = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /remote-browser\/node_modules/,
+        exclude: /node_modules/,
         enforce: 'pre',
         loader: 'eslint-loader',
       },
       {
         test: /\.js$/,
-        exclude: /remote-browser\/node_modules/,
+        exclude: /node_modules/,
         loader: 'babel-loader',
       },
       {

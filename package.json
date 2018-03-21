@@ -1,15 +1,14 @@
 {
   "name": "remote-browser",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "A low-level browser automation framework built on top of the Web Extensions API standard. ",
   "main": "dist/index.js",
   "repository": "git@github.com:intoli/remote-browser.git",
   "author": "Intoli, LLC <contact@intoli.com>",
   "license": "BSD",
   "scripts": {
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack",
+    "build": "NODE_ENV=production webpack --config webpack",
     "build:web": "NODE_ENV=production webpack --config webpack/web-client.config.js",
-    "postinstall": "postinstall-build dist",
     "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
     "test-fast": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
@@ -41,7 +40,6 @@
     "express": "^4.16.2",
     "express-ws": "^3.0.0",
     "portfinder": "^1.0.13",
-    "postinstall-build": "^5.0.1",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "simple-websocket": "^5.1.0",
     "ws": "^3.3.2"
