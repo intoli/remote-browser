@@ -11,6 +11,8 @@ export default class ConnectionProxy extends EventEmitter {
     // We'll send messages between
     this.clientTypes = ['extension', 'user'];
     this.webSockets = { extension: {}, user: {} };
+
+    this.pendingMessages = { extension: {}, user: {} };
   }
 
   close = async () => {
@@ -58,6 +60,10 @@ export default class ConnectionProxy extends EventEmitter {
               const otherWebSocket = this.webSockets[otherClientType][sessionId];
               if (otherWebSocket && otherWebSocket.readyState === 1) {
                 otherWebSocket.send(data);
+              } else {
+                const pendingMessages = this.pendingMessages[otherClientType][sessionId] || [];
+                pendingMessages.push(data);
+                this.pendingMessages[otherClientType][sessionId] = pendingMessages;
               }
             });
 
@@ -70,7 +76,19 @@ export default class ConnectionProxy extends EventEmitter {
             });
 
             // Report success.
-            ws.send(JSON.stringify({ success: true }));
+            ws.send(JSON.stringify({ success: true }), () => {
+              // Write out any pending messages afterwards.
+              const pendingMessages = this.pendingMessages[clientType][sessionId] || [];
+              delete this.pendingMessages[clientType][sessionId];
+              if (pendingMessages.length) {
+                let promise = Promise.resolve();
+                pendingMessages.forEach((message) => {
+                  promise = promise.then(() => (
+                    new Promise(sendResolve => ws.send(message, sendResolve))
+                  ));
+                });
+              }
+            });
           } else {
             // Report failure.
             ws.send(JSON.stringify({ success: false }), () => {
