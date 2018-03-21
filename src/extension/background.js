@@ -109,7 +109,7 @@ class Background {
       // If there are pending requests, we'll need to resend them. The resolve/revoke callbacks will
       // still be in place, we just need to repost the requests.
       const pendingRequests = this.tabPortPendingRequests[tabId];
-      if (pendingRequests.length) {
+      if (pendingRequests && pendingRequests.length) {
         const newPort = await this.getTabPort(tabId);
         pendingRequests.forEach(request => newPort.postMessage(request));
       }
