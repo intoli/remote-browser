@@ -114,11 +114,10 @@ export default class Browser extends CallableProxy {
   };
 
   negotiateConnection = async () => {
-    // Note that this is really for internal use only.
-    this.client = new Client();
-    await this.client.connect(this.connectionUrl, 'user', this.sessionId);
-
+    // Note that this function is really for internal use only.
     // Prepare for the initial connection from the browser.
+    this.client = new Client();
+    let proxyConnection;
     this.connection = new Promise((resolve) => {
       const channel = 'initialConnection';
       const handleInitialConnection = () => {
@@ -126,7 +125,9 @@ export default class Browser extends CallableProxy {
         resolve();
       };
       this.client.subscribe(handleInitialConnection, { channel });
+      proxyConnection = this.client.connect(this.connectionUrl, 'user', this.sessionId);
     });
+    await proxyConnection;
   };
 
   quit = async () => {
