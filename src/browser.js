@@ -27,6 +27,7 @@ export default class Browser extends CallableProxy {
           Reflect.get(target, name)
       ),
     });
+    Object.defineProperty(this, 'name', { value: 'Browser' });
     this.options = options;
   }
 
