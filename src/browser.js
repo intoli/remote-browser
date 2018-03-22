@@ -22,7 +22,7 @@ export default class Browser extends CallableProxy {
         this.evaluateInBackground(...argumentsList)
       ),
       get: (target, name) => (
-        name.match(/^\d+$/) ?
+        name && name.match && name.match(/^\d+$/) ?
           (...args) => this.evaluateInContent(parseInt(name, 10), ...args) :
           Reflect.get(target, name)
       ),
