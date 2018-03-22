@@ -182,6 +182,11 @@ class Background {
       port.postMessage(request);
     });
   };
+
+  quit = async () => (
+    Promise.all((await browser.windows.getAll())
+      .map(({ id }) => browser.windows.remove(id)))
+  );
 }
 
 
