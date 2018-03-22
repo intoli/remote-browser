@@ -127,7 +127,19 @@ class Background {
     try {
       await this.client.connect(url, 'extension', sessionId);
       this.client.send(null, { channel: 'initialConnection' });
+      this.client.on('close', this.handleConnectionLoss);
+      this.client.on('error', this.handleConnectionLoss);
+      this.pingInterval = setInterval(() => {
+        let alive = false;
+        this.client.ping().then(() => { alive = true; });
+        setTimeout(() => {
+          if (!alive) {
+            this.handleConnectionLoss();
+          }
+        }, 58000);
+      }, 60000);
     } catch (error) {
+      this.handleConnectionLoss();
       this.connectionStatus = 'error';
       this.broadcastConnectionStatus();
     }
@@ -135,6 +147,8 @@ class Background {
 
   connectOnLaunch = async () => {
     const { url, sessionId } = await this.findConnectionDetails();
+    // This will only apply if the browser was launched by the browser client.
+    this.quitOnConnectionLoss = true;
     await this.connect(url, sessionId);
   };
 
@@ -167,6 +181,15 @@ class Background {
     });
   };
 
+  handleConnectionLoss = async () => {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+    }
+    if (this.quitOnConnectionLoss) {
+      this.quit();
+    }
+  }
+
   sendToTab = async (tabId, message) => {
     const port = await this.getTabPort(tabId);
     this.tabMessageId += 1;
@@ -182,6 +205,11 @@ class Background {
       port.postMessage(request);
     });
   };
+
+  quit = async () => (
+    Promise.all((await browser.windows.getAll())
+      .map(({ id }) => browser.windows.remove(id)))
+  );
 }
 
 
