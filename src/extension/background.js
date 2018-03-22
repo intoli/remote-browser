@@ -129,6 +129,15 @@ class Background {
       this.client.send(null, { channel: 'initialConnection' });
       this.client.on('close', this.handleConnectionLoss);
       this.client.on('error', this.handleConnectionLoss);
+      this.pingInterval = setInterval(() => {
+        let alive = false;
+        this.client.ping().then(() => { alive = true; });
+        setTimeout(() => {
+          if (!alive) {
+            this.handleConnectionLoss();
+          }
+        }, 58000);
+      }, 60000);
     } catch (error) {
       this.handleConnectionLoss();
       this.connectionStatus = 'error';
@@ -172,9 +181,14 @@ class Background {
     });
   };
 
-  handleConnectionLoss = async () => (
-    this.quitOnConnectionLoss && this.quit()
-  )
+  handleConnectionLoss = async () => {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+    }
+    if (this.quitOnConnectionLoss) {
+      this.quit();
+    }
+  }
 
   sendToTab = async (tabId, message) => {
     const port = await this.getTabPort(tabId);
