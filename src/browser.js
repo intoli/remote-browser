@@ -3,7 +3,7 @@ import assert from 'assert';
 import fetch from 'isomorphic-fetch';
 
 import { Client, ConnectionProxy } from './connections';
-import { RemoteError } from './errors';
+import { ConnectionError, RemoteError } from './errors';
 import { launchChrome, launchFirefox } from './launchers';
 
 
@@ -89,6 +89,9 @@ export default class Browser extends CallableProxy {
       '/api/initialize-session';
     const response = await (await fetch(initializationUrl)).json();
     this.connectionUrl = response.url;
+    if (response.error) {
+      throw new ConnectionError(response.error);
+    }
     if (!response.url || !response.sessionId) {
       throw new Error('Invalid initialization response from the tour backend');
     }
