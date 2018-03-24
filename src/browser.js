@@ -50,7 +50,12 @@ export default class Browser extends CallableProxy {
           return Reflect.get(target, name);
         }
         // Remote Web Extensions API properties.
-        return new ApiProxy(this.evaluateInBackground, `browser.${name}`);
+        if (typeof name === 'string') {
+          return new ApiProxy(this.evaluateInBackground, `browser.${name}`);
+        }
+        // Fall back to accessing the property, even if it's not defined. The node repl checks
+        // some weird symbols and other things that would fail in `ApiProxy`.
+        return Reflect.get(target, name);
       },
     });
     Object.defineProperty(this, 'name', { value: 'Browser' });
