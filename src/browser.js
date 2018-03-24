@@ -39,11 +39,18 @@ export default class Browser extends CallableProxy {
       apply: (target, thisArg, argumentsList) => (
         this.evaluateInBackground(...argumentsList)
       ),
-      get: (target, name) => (
-        name && name.match && name.match(/^\d+$/) ?
-          (...args) => this.evaluateInContent(parseInt(name, 10), ...args) :
-          Reflect.get(target, name)
-      ),
+      get: (target, name) => {
+        // Integer indices, refering to tab IDs.
+        if (name && name.match && name.match(/^\d+$/)) {
+          return (...args) => this.evaluateInContent(parseInt(name, 10), ...args);
+        }
+        // Properties that are part of the `Browser` API.
+        if (Reflect.has(target, name)) {
+          return Reflect.get(target, name);
+        }
+        // Remote Web Extensions API properties.
+        return new ApiProxy(this.evaluateInBackground, `browser.${name}`);
+      },
     });
     Object.defineProperty(this, 'name', { value: 'Browser' });
     this.options = options;
