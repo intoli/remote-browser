@@ -15,6 +15,24 @@ class CallableProxy extends Function {
 }
 
 
+class ApiProxy extends CallableProxy {
+  constructor(evaluator, objectName) {
+    super({
+      apply: async (target, thisArg, argumentsList) => (
+        evaluator(
+          'async (objectName, argumentsList) => eval(objectName).apply(null, argumentsList)',
+          objectName,
+          argumentsList,
+        )
+      ),
+      get: (target, name) => (
+        new ApiProxy(evaluator, `${objectName}.${name}`)
+      ),
+    });
+  }
+}
+
+
 export default class Browser extends CallableProxy {
   constructor(options) {
     super({
