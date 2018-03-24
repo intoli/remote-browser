@@ -177,6 +177,13 @@ import Browser, { RemoteError } from '../dist';
         assert.equal(image.bitmap.data[index + 2], 0);
       });
     });
+
+    it('should support direct proxying of the remote browser API', async () => {
+      const blankPageUrl = urlPrefix + redPagePath;
+      const { id } = await browser.tabs.update({ url: blankPageUrl });
+      const actualUrl = await browser[id](() => window.location.href);
+      assert.equal(actualUrl, blankPageUrl);
+    });
   });
 });
 
