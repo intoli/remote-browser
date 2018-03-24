@@ -162,7 +162,7 @@ export default class Browser extends CallableProxy {
 
   quit = async () => {
     // Close all of the windows.
-    if (this.client) {
+    if (Reflect.has(this, 'client')) {
       // We'll never get a response here, so it needs to be sent off asynchronously.
       this.evaluateInBackground(async () => (
         Promise.all((await browser.windows.getAll())
@@ -170,15 +170,15 @@ export default class Browser extends CallableProxy {
       ));
     }
 
-    if (this.driver) {
+    if (Reflect.has(this, 'driver')) {
       await this.driver.quit();
     }
 
-    if (this.proxy) {
+    if (Reflect.has(this, 'proxy')) {
       await this.proxy.close();
     }
 
-    if (this.client) {
+    if (Reflect.has(this, 'client')) {
       await this.client.close();
     }
   };
