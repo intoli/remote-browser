@@ -43,7 +43,31 @@ export default class Browser extends CallableProxy {
       get: (target, name) => {
         // Integer indices, refering to tab IDs.
         if (name && name.match && name.match(/^\d+$/)) {
-          return (...args) => this.evaluateInContent(parseInt(name, 10), ...args);
+          const evaluator = (...args) => this.evaluateInContent(parseInt(name, 10), ...args);
+          evaluator.readyState = async (readyState) => {
+            assert(
+              ['loading', 'interactive', 'complete'].includes(readyState),
+              'Only "loading," "interactive," and "complete" are valid ready states.',
+            );
+            return evaluator(async desiredState => (
+              new Promise((resolve) => {
+                let resolved = false;
+                const states = ['loading', 'interactive', 'complete'];
+                const handleReadyStateChange = () => {
+                  if (!resolved) {
+                    if (states.indexOf(desiredState) <= states.indexOf(document.readyState)) {
+                      document.removeEventListener('readystatechange', handleReadyStateChange);
+                      resolved = true;
+                      resolve(document.readyState);
+                    }
+                  }
+                };
+                document.addEventListener('readystatechange', handleReadyStateChange);
+                handleReadyStateChange();
+              })
+            ), readyState);
+          };
+          return evaluator;
         }
         // Properties that are part of the `Browser` API.
         if (Reflect.has(target, name)) {

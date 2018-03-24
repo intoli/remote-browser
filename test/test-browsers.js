@@ -184,6 +184,13 @@ import Browser, { RemoteError } from '../dist';
       const actualUrl = await browser[id](() => window.location.href);
       assert.equal(actualUrl, blankPageUrl);
     });
+
+    it('should allow waiting for `readyState` changes', async() => {
+      const redPageUrl = urlPrefix + redPagePath;
+      const { id } = await browser.tabs.update({ url: redPageUrl });
+      const readyState = await browser[id].readyState('complete');
+      assert.equal(readyState, 'complete');
+    });
   });
 });
 
