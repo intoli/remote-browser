@@ -49,7 +49,7 @@ export default class Browser extends CallableProxy {
               ['loading', 'interactive', 'complete'].includes(readyState),
               'Only "loading," "interactive," and "complete" are valid ready states.',
             );
-            return evaluator(async desiredState => (
+            return evaluator(desiredState => (
               new Promise((resolve) => {
                 let resolved = false;
                 const states = ['loading', 'interactive', 'complete'];
