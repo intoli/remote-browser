@@ -49,7 +49,7 @@ Be sure to check out the [Introduction](#introduction) to learn about how Remote
 ## Introduction
 
 The core technology that makes Remote-Browser possible is the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
-This API is what allows third party browser addons to extend and modify the capabilities of browser such as Firefox, Chrome, Edge, and Opera.
+This API is what allows third party browser addons to extend and modify the capabilities of browsers such as Firefox, Chrome, Edge, and Opera.
 If you've never written a browser extension before, then you might be surprised at just how powerful this API is.
 Creating tabs and interacting with pages is just the beginning; it's also possible to [intercept and modify network requests/responses](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest), [create and control containerized sessions within a single browser instance](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/contextualIdentities), [take screenshots](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab), and [*much* more](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API).
 The central idea behind Remote-Browser is that there's no need to reinvent the wheel when modern browsers *already* ship with an extremely powerful cross-browser compatible API that's suitable for automation tasks.
@@ -74,7 +74,7 @@ On the surface, this probably looks pretty similar to examples from other browse
 The difference is that [browser.tabs.create()](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/create) and [browser.tabs.captureVisibleTab](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab) aren't part of the Remote-Browser API; they're part of the Web Extensions API.
 
 In a web extension, you would typically interact with the Web Extensions API through a global `browser` object.
-You could makes a call to `browser.tabs.create()` in your extension's [background script](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/background), and it would create a new tab.
+You could make a call to `browser.tabs.create()` in your extension's [background script](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/background), and it would create a new tab.
 Remote-Browser lets you make this call from the environment where you're running your browser control code as though you were inside of an extension.
 The following three calls are actually all exactly equivalent with Remote-Browser.
 
@@ -112,7 +112,7 @@ await browser[tab.id](() => document.body.innerHTML = 'hi!');
 ```
 
 At this point, you've seen nearly all of the syntax that Remote-Browser provides.
-It makes it really easy to evaluate code in different contexts, and lets you use the browser APIs for.
+It makes it really easy to evaluate code in different contexts, and lets you use the browser APIs to control and interact with the browser itself.
 
 
 ## Installation
