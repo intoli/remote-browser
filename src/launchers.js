@@ -1,5 +1,6 @@
 import path from 'path';
 
+import chromedriver from 'chromedriver';
 import geckodriver from 'geckodriver';
 import { Builder } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
@@ -20,6 +21,7 @@ export const launchChrome = async (connectionUrl, sessionId = 'default') => {
     .forBrowser('chrome')
     .setChromeOptions(new chrome.Options()
       .addArguments([`--load-extension=${extension}`]))
+    .setChromeService(new chrome.ServiceBuilder(chromedriver.path))
     .build();
 
   const fileUrl = constructFileUrl(connectionUrl, sessionId);
