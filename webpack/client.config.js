@@ -4,6 +4,7 @@ const webpack = require('webpack');
 
 
 const options = {
+  context: path.resolve(__dirname, '..'),
   entry: {
     index: path.resolve(__dirname, '..', 'src', 'index.js'),
   },
@@ -41,7 +42,7 @@ const options = {
   target: 'node',
   devtool: 'source-map',
   node: {
-    __dirname: false,
+    __dirname: true,
   }
 };
 
