@@ -29,7 +29,12 @@
 Remote-Browser is a library for controlling web browsers like Chrome and Firefox programmatically using JavaScript.
 You've likely heard of similar browser automation frameworks before, such as [Puppeteer](https://github.com/GoogleChrome/puppeteer) and [Selenium](https://github.com/SeleniumHQ/selenium).
 Much like these other projects, Remote-Browser can be used to accomplish a wide variety of tasks relating to UI testing, Server Side Rendering (SSR), and web scraping.
-What makes Remote-Browser different from these other libraries is that it's built using standard browser APIs, and its primary purpose is facilitating interactions with these existing APIs.
+What makes Remote-Browser different from these other libraries is that it's built using standard cross-browser compatible technologies, and its primary goal is to facilitate interactions with existing APIs rather than to create a new one of its own.
+
+Remote-Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
+If you're already familiar with these technologies, then you already know almost everything that you need to use Remote-Browser.
+If not, then there are vast learning resources out there, like [The Mozilla Developer Network (MDN)](https://developer.mozilla.org/en-US/docs/Web)), which can get you up to speed in no time.
+Be sure to check out the [Introduction](#introduction) to learn about how Remote-Browser makes it easy to use these technologies.
 
 
 ## Table of Contents
