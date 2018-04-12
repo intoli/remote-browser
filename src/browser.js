@@ -2,6 +2,7 @@ import assert from 'assert';
 
 import fetch from 'isomorphic-fetch';
 
+import { serializeFunction } from './common';
 import { Client, ConnectionProxy } from './connections';
 import { ConnectionError, RemoteError } from './errors';
 import { launchChrome, launchFirefox } from './launchers';
@@ -89,7 +90,7 @@ export default class Browser extends CallableProxy {
   evaluateInBackground = async (asyncFunction, ...args) => {
     const { error, result } = await this.client.send({
       args,
-      asyncFunction: asyncFunction.toString(),
+      asyncFunction: serializeFunction(asyncFunction),
     }, { channel: 'evaluateInBackground' });
 
     if (error) {
@@ -102,7 +103,7 @@ export default class Browser extends CallableProxy {
   evaluateInContent = async (tabId, asyncFunction, ...args) => {
     const { error, result } = await this.client.send({
       args,
-      asyncFunction: asyncFunction.toString(),
+      asyncFunction: serializeFunction(asyncFunction),
       tabId,
     }, { channel: 'evaluateInContent' });
 
