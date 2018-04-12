@@ -34,9 +34,23 @@ What makes Remote-Browser different from these other libraries is that it's buil
 
 ## Table of Contents
 
+- [Installation](#installation) - Instructions for installing Remote-Browser.
 - [Development](#development) - Instructions for setting up the development environment.
 - [Contributing](#contributing) - Guidelines for contributing.
 - [License](#license) - License details for the project.
+
+
+## Installation
+
+Remote-Browser is available as an [npm package](https://www.npmjs.com/package/remote-browser), and the latest version can be installed by running the following.
+
+```bash
+yarn add remote-browser
+```
+
+It's possible to use Remote-Browser as a client for browser sessions on remote servers, but you'll almost certainly want a local browser installed when you're first getting started.
+We recommend [installing Firefox](https://www.mozilla.org/firefox), even if it's not your day-to-day browser, because it has a more complete implementation of the Web Extensions API than other browsers.
+It's additionally set as the default in Remote-Browser, so it will allow you to run the usage examples without changing any of the configuration options.
 
 
 ## Development
