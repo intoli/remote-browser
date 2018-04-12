@@ -6,7 +6,7 @@ import { Command } from 'selenium-webdriver/lib/command';
 import firefox from 'selenium-webdriver/firefox';
 
 
-const extension = path && path.resolve && path.resolve(__dirname, 'extension');
+const extension = path && path.resolve && path.resolve(__dirname, '..', 'dist', 'extension');
 
 
 const constructFileUrl = (connectionUrl, sessionId) => (
