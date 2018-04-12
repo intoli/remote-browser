@@ -31,43 +31,42 @@ You've likely heard of similar browser automation frameworks before, such as [Pu
 Much like these other projects, Remote-Browser can be used to accomplish a wide variety of tasks relating to UI testing, Server Side Rendering (SSR), and web scraping.
 What makes Remote-Browser different from these other libraries is that it's built using standard browser APIs, and its primary purpose is facilitating interactions with these existing APIs.
 
-## Install Dependencies
+
+## Table of Contents
+
+- [Development](#development) - Instructions for setting up the development environment.
+- [Contributing](#contributing) - Guidelines for contributing.
+- [License](#license) - License details for the project.
+
+
+## Development
+
+To get started on development, you simply need to clone the repository and install the project dependencies.
 
 ```bash
+# Clone the repository.
+git clone git@github.com:intoli/remote-browser.git
+cd remote-browser
+
+# Install the dependencies.
 yarn install
-```
 
-## Tests
+# Build the project.
+yarn build
 
-You can compile and run all tests with
-
-```bash
+# Run the tests.
 yarn test
 ```
 
-The pre-compilation here is necessary because the extension needs to be packaged to run in the browsers.
-If you only need to test the faster unit tests, then you can run
+## Contributing
 
-```bash
-yarn test-fast
-```
+Contributions are welcome, but please follow these contributor guidelines:
 
-which will skip the compilation and exclude tests including "Browser" in their names.
-To run the tests in parallel you can run the following.
-
-```bash
-yarn test -- --watch
-```
+- Create an issue on [the issue tracker](https://github.com/intoli/remote-browser/issues/new) to discuss potential changes before submitting a pull request.
+- Include at least one test to cover any new functionality or bug fixes.
+- Make sure that all of your tests are passing and that there are no merge conflicts.
 
 
+# License
 
-## Live Reloading
-
-Run
-
-```bash
-yarn watch
-```
-
-to create a build in `dist/` that will automatically live-reload.
-The `dist/extension` subdirectory can be loaded as an unpacked extension in a browser.
+Remote-Browser is licensed under a [BSD 2-Clause License](LICENSE.md) and is copyright [Intoli, LLC](https://intoli.com).
