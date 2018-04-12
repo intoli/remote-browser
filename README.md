@@ -13,6 +13,17 @@
             alt="Share on Hacker News"></a>
 </h1>
 
+<p align="left">
+    <a href="https://circleci.com/gh/intoli/remote-browser/tree/master">
+        <img src="https://img.shields.io/circleci/project/github/intoli/remote-browser/master.svg"
+            alt="Build Status"></a>
+    <a href="https://github.com/intoli/remote-browser/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/License-BSD%202--Clause-blue.svg"
+            alt="License"></a>
+    <a href="https://www.npmjs.com/package/remote-browser">
+        <img src="https://img.shields.io/npm/v/remote-browser.svg"
+            alt="NPM Version"></a>
+</p>
 
 # Development
 
