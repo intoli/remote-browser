@@ -81,6 +81,6 @@ Contributions are welcome, but please follow these contributor guidelines:
 - Make sure that all of your tests are passing and that there are no merge conflicts.
 
 
-# License
+## License
 
-Remote-Browser is licensed under a [BSD 2-Clause License](LICENSE.md) and is copyright [Intoli, LLC](https://intoli.com).
+Remote-Browser is licensed under a [BSD 2-Clause License](LICENSE) and is copyright [Intoli, LLC](https://intoli.com).
