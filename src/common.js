@@ -28,6 +28,7 @@ export class TimeoutPromise extends Promise {
           completed = true;
           return f(...params);
         }
+        return null;
       };
 
       setTimeout(guard(() => {
@@ -35,5 +36,5 @@ export class TimeoutPromise extends Promise {
       }), timeout);
       executor(guard(resolve), guard(revoke));
     });
-  };
-};
+  }
+}
