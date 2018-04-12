@@ -45,7 +45,7 @@ const options = {
       'typeof window': '"object"',
     }),
     new webpack.EnvironmentPlugin([
-      REMOTE_BROWSER_API_URL,
+      'REMOTE_BROWSER_API_URL',
     ]),
   ],
   target: 'web',
