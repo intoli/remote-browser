@@ -25,8 +25,11 @@
             alt="NPM Version"></a>
 </p>
 
-# Development
 
+Remote-Browser is a library for controlling web browsers like Chrome and Firefox programmatically using JavaScript.
+You've likely heard of similar browser automation frameworks before, such as [Puppeteer](https://github.com/GoogleChrome/puppeteer) and [Selenium](https://github.com/SeleniumHQ/selenium).
+Much like these other projects, Remote-Browser can be used to accomplish a wide variety of tasks relating to UI testing, Server Side Rendering (SSR), and web scraping.
+What makes Remote-Browser different from these other libraries is that it's built using standard browser APIs, and its primary purpose is facilitating interactions with these existing APIs.
 
 ## Install Dependencies
 
