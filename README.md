@@ -34,13 +34,14 @@ What makes Remote-Browser different from these other libraries is that it's buil
 Remote-Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
 If you're already familiar with these technologies, then you already know almost everything that you need to use Remote-Browser.
 If not, then there are vast learning resources out there, like [The Mozilla Developer Network (MDN)](https://developer.mozilla.org/en-US/docs/Web), which can get you up to speed in no time.
-Be sure to check out the [Introduction](#introduction) to learn about how Remote-Browser makes it easy to use these technologies.
+Be sure to check out the [Introduction](#introduction) and [Usage Examples](#usage-examples) to learn about how Remote-Browser makes it easy to use these technologies.
 
 
 ## Table of Contents
 
 - [Introduction](#introduction) - A detailed explanation of what Remote-Browser is and the core concepts behind the project.
 - [Installation](#installation) - Instructions for installing Remote-Browser.
+- [Usage Examples](#usage-examples) - Illustrative examples of how Remote-Browser can be used.
 - [Development](#development) - Instructions for setting up the development environment.
 - [Contributing](#contributing) - Guidelines for contributing.
 - [License](#license) - License details for the project.
@@ -113,6 +114,34 @@ await browser[tab.id](() => document.body.innerHTML = 'hi!');
 
 At this point, you've seen nearly all of the syntax that Remote-Browser provides.
 It makes it really easy to evaluate code in different contexts, and lets you use the browser APIs to control and interact with the browser itself.
+
+
+## Usage Examples
+
+### Connecting to a Running Browser
+
+All of the browser control code for Remote-Browser is implemented as a cross-browser compatible web extension.
+When you execute `Browser.launch()`, it simply runs a browser instance with the extension installed and passes it the parameters necessary to connect to the remote client.
+You can also install this same extension in your day-to-day browser, and tell it to connect to a remote client manually.
+This can be a very useful debugging tool while you're developing scripts, or as a means to quickly automate simple tasks without needing to create a whole browser extension from scratch.
+
+Calling `Browser.listen()` on a new browser instance will cause it to listen on an open port for a connection from an already running browser.
+It will return the port that it's listening on, and wait for you to initialize a connection from a browser that has the Remote-Browser extension installed.
+
+```javascript
+const browser = new Browser();
+const port = await browser.listen();
+console.log(`Listening on port: ${port}`);
+```
+
+The connection can be initiated from within the browser using the Remote-Browser extension popup.
+Here's an example of the connection process.
+
+![Connecting the Client to a Live Browser](media/live-connection-demo.gif)
+
+The browser interactions that we do in this video aren't particularly useful, but you have the full power of Remote-Browser at your fingertips once you're connected.
+You could, for instance, use [web extension alarms](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/alarms) to schedule arbitrary tasks to run in the browser at specified times or intervals.
+These tasks would be scheduled within the browser itself, so you could configure code to run even after the client has disconnected.
 
 
 ## Installation
