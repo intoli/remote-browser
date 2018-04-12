@@ -8,6 +8,11 @@ export default class Client extends ConnectionBase {
     if (this.ws) {
       this.ws.destroy();
     }
+    Object.keys(this.pendingMessageResolves)
+      .forEach((messageId) => {
+        this.pendingMessageResolves[messageId]({});
+        delete this.pendingMessageResolves[messageId];
+      });
   };
 
   connect = async (url, clientType, sessionId = 'default') => (
