@@ -39,10 +39,80 @@ Be sure to check out the [Introduction](#introduction) to learn about how Remote
 
 ## Table of Contents
 
+- [Introduction](#introduction) - A detailed explanation of what Remote-Browser is and the core concepts behind the project.
 - [Installation](#installation) - Instructions for installing Remote-Browser.
 - [Development](#development) - Instructions for setting up the development environment.
 - [Contributing](#contributing) - Guidelines for contributing.
 - [License](#license) - License details for the project.
+
+
+## Introduction
+
+The core technology that makes Remote-Browser possible is the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
+This API is what allows third party browser addons to extend and modify the capabilities of browser such as Firefox, Chrome, Edge, and Opera.
+If you've never written a browser extension before, then you might be surprised at just how powerful this API is.
+Creating tabs and interacting with pages is just the beginning; it's also possible to [intercept and modify network requests/responses](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest), [create and control containerized sessions within a single browser instance](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/contextualIdentities), [take screenshots](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab), and [*much* more](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API).
+The central idea behind Remote-Browser is that there's no need to reinvent the wheel when modern browsers *already* ship with an extremely powerful cross-browser compatible API that's suitable for automation tasks.
+
+Let's take a look at a quick example of how you would navigate to a tab and take a screenshot using Remote-Browser.
+
+```javascript
+import Browser from 'remote-browser';
+
+(async () => {
+  // Create and launch a new browser instance.
+  const browser = new Browser();
+  await browser.launch();
+
+  // Directly access the Web Extensions API from a remote client.
+  const tab = await browser.tabs.create({ url: 'https://intoli.com' });
+  const screenshot = await browser.tabs.captureVisibleTab();
+})();
+```
+
+On the surface, this probably looks pretty similar to examples from other browser automation frameworks.
+The difference is that [browser.tabs.create()](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/create) and [browser.tabs.captureVisibleTab](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab) aren't part of the Remote-Browser API; they're part of the Web Extensions API.
+
+In a web extension, you would typically interact with the Web Extensions API through a global `browser` object.
+You could makes a call to `browser.tabs.create()` in your extension's [background script](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/background), and it would create a new tab.
+Remote-Browser lets you make this call from the environment where you're running your browser control code as though you were inside of an extension.
+The following three calls are actually all exactly equivalent with Remote-Browser.
+
+```javascript
+// Very explicit, we're specifying a function and argument to evaluate in the background page.
+await browser.evaluateInBackground(createProperties => (
+  browser.tabs.create(createProperties)
+), { url: 'https://intoli.com' });
+
+// A bit of syntactic sugar, we can omit ".evaluateInBackground" and the same thing happens.
+await browser(createProperties => (
+  browser.tabs.create(createProperties)
+), { url: 'https://intoli.com' });
+
+// A lot of syntactic sugar, the function and explicit argument get constructed automatically.
+await browser.tabs.create({ url: 'https://intoli.com' });
+```
+
+It's mosty immediately clear what's really happening here with the the first `browser.evaluateInBackground()` call.
+A function and it's argument are being transmitted to the background script context of a web extension where they're evaluated.
+The next two calls just rip out successive layers of boilerplate, but they're doing the exact same thing.
+
+Similarly, we can evaluate code in the context of a tab in the browser.
+The syntax here is very similar to how we evaluate code in the background script, we just need to additionally specify which tab we're interested in.
+The following two calls are also exactly equivalent.
+
+```javascript
+// Evaluate the function in the content script context for the identified by `tab.id`.
+await browser.evaluateInContent(tab.id, () => (
+  document.innerHTML = 'hi!';
+));
+
+// A shorthand for first accessing a specific tab, and then evaluating code in it.
+await browser[tab.id](() => document.body.innerHTML = 'hi!');
+```
+
+At this point, you've seen nearly all of the syntax that Remote-Browser provides.
+It makes it really easy to evaluate code in different contexts, and lets you use the browser APIs for.
 
 
 ## Installation
