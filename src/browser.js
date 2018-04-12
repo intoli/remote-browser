@@ -139,9 +139,23 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    const secure = typeof window === 'undefined' || window.location.protocol.startsWith('https');
-    const initializationUrl = `http${secure ? 's' : ''}://tour-backend.intoli.com` +
-      '/api/initialize-session';
+    if (!process.env.REMOTE_BROWSER_API_URL) {
+      throw new Error((
+        'You must specify a remote server using the REMOTE_BROWSER_API_URL environment variable. ' +
+        'This should be specified at build-time when building the web client.'
+      ));
+    }
+    // We can use `http` or `https` in node, so we won't coerce anything if this is `null`.
+    const secure = typeof window === 'undefined' ? null :
+      window.location.protocol.startsWith('https');
+
+    let initializationUrl = process.env.REMOTE_BROWSER_API_URL;
+    if (secure && initializationUrl.startsWith('http:')) {
+      initializationUrl = `https:${initializationUrl.slice(5)}`;
+    } else if (secure === false && initializationUrl.startsWith('https:')) {
+      initializationUrl = `http:${initializationUrl.slice(6)}`;
+    }
+
     const response = await (await fetch(initializationUrl)).json();
     this.connectionUrl = response.url;
     if (response.error) {
@@ -150,9 +164,10 @@ export default class Browser extends CallableProxy {
     if (!response.url || !response.sessionId) {
       throw new Error('Invalid initialization response from the tour backend');
     }
+
     if (secure && response.url.startsWith('ws:')) {
       this.connectionUrl = `wss:${response.url.slice(3)}`;
-    } else if (!secure && response.url.startsWith('wss:')) {
+    } else if (secure === false && response.url.startsWith('wss:')) {
       this.connectionUrl = `ws:${response.url.slice(4)}`;
     }
     this.sessionId = response.sessionId;
