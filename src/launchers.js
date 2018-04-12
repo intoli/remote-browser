@@ -1,5 +1,6 @@
 import path from 'path';
 
+import geckodriver from 'geckodriver';
 import { Builder } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
 import { Command } from 'selenium-webdriver/lib/command';
@@ -33,6 +34,7 @@ export const launchFirefox = async (connectionUrl, sessionId = 'default') => {
     .forBrowser('firefox')
     .setFirefoxOptions(new firefox.Options()
       .headless())
+    .setFirefoxService(new firefox.ServiceBuilder(geckodriver.path))
     .build();
 
   const command = new Command('install addon')
