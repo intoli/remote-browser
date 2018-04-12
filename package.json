@@ -10,6 +10,7 @@
     "build": "NODE_ENV=production webpack --config webpack",
     "build:web": "NODE_ENV=production webpack --config webpack/web-client.config.js",
     "postinstall": "postinstall-build dist",
+    "postversion": "git push && git push --tags",
     "test": "npm run build && NODE_ENV=test mocha --exit --require babel-core/register",
     "test-fast": "NODE_ENV=test mocha --exit --require babel-core/register --invert --grep Browser",
     "watch": "NODE_ENV=development webpack --watch --config webpack"
