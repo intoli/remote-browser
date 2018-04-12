@@ -12,6 +12,22 @@ const catchError = async(promise) => {
 };
 
 describe('common', () => {
+  describe('serializeFunction', () => {
+    it('should serialize arrow functions', () => {
+      const sayHello = () => 'hello';
+      const serialized = common.serializeFunction(sayHello);
+      const result = eval(`(${serialized})()`);
+      assert.equal(result, 'hello');
+    });
+
+    it('should handle broken Safari functions', async () => {
+      const sayHello = 'async function () => \'hello\'';
+      const serialized = common.serializeFunction(sayHello);
+      const result = await eval(`(${serialized})()`);
+      assert.equal(result, 'hello');
+    });
+  });
+
   describe('TimeoutPromise', () => {
     it('should throw an exception after timeout', async () => {
       const error = await catchError(new common.TimeoutPromise(() => null, 50))
