@@ -1,9 +1,26 @@
+defaults: &defaults
+  working_directory: ~/remote-browser
+  docker:
+    - image: circleci/node:latest-browsers
+
+whitelist: &whitelist
+  paths:
+    - .babelrc
+    - .eslintrc
+    - .gitignore
+    - dist/*
+    - LICENSE
+    - README.md
+    - package.json
+    - src/*
+    - test/*
+    - webpack/*
+    - yarn.lock
+
 version: 2
 jobs:
-  build:
-    working_directory: ~/remote-browser
-    docker:
-      - image: circleci/node:latest-browsers
+  checkout:
+    <<: *defaults
     steps:
       - checkout
       - run:
@@ -18,12 +35,111 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
+      - persist_to_workspace:
+          root: ~/remote-browser
+          paths:
+          <<: *whitelist
+
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/remote-browser
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Build
+          command: yarn build
+      - persist_to_workspace:
+          root: ~/remote-browser
+          paths:
+          <<: *whitelist
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/remote-browser
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install Firefox and Geckodriver
           command: |
+            # Kind of gross that we have to do this, but the CircleCI image is ancient.
             curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.20.0/geckodriver-v0.20.0-linux64.tar.gz" | tar -zxC node_modules/.bin/
             curl -L "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" | sudo tar -C /opt -jx
             sudo ln -s /opt/firefox/firefox node_modules/.bin/firefox
       - run:
-          name: Run Tests
+          name: Test
           command: yarn test
+
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/remote-browser
+      - run:
+          name: Write NPM Token to ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Install dot-json package
+          command: npm install dot-json
+      - run:
+          name: Write version to package.json
+          command: $(yarn bin)/dot-json package.json version ${CIRCLE_TAG:1}
+      - run:
+          name: Publish to NPM
+          command: npm publish --access=public
+
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - checkout
+      - build:
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
+          requires:
+            - checkout
+      - test:
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
+          requires:
+            - build
+
+  release:
+    jobs:
+      - checkout:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - build:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+          requires:
+            - checkout
+      - test:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
+      - deploy:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+          requires:
+            - test
