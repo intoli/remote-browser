@@ -34,12 +34,13 @@ What makes Remote Browser different from these other libraries is that it's buil
 Remote Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
 If you're already familiar with these technologies, then you already know almost everything that you need to use Remote Browser.
 If not, then there are vast learning resources out there, like [The Mozilla Developer Network (MDN)](https://developer.mozilla.org/en-US/docs/Web), which can get you up to speed in no time.
-Be sure to check out the [Introduction](#introduction) and [Usage Examples](#usage-examples) to learn about how Remote Browser makes it easy to use these technologies.
+Be sure to check out the [Introduction](#introduction), the [Interactive Tour](https://intoli.com/tour), and [Usage Examples](#usage-examples) to learn about how Remote Browser makes it easy to use these technologies.
 
 
 ## Table of Contents
 
 - [Introduction](#introduction) - A detailed explanation of what Remote Browser is and the core concepts behind the project.
+- [Interactive Tour](#interactive-tour)
 - [Installation](#installation) - Instructions for installing Remote Browser.
 - [Usage Examples](#usage-examples) - Illustrative examples of how Remote Browser can be used.
 - [Development](#development) - Instructions for setting up the development environment.
@@ -114,6 +115,20 @@ await browser[tab.id](() => document.body.innerHTML = 'hi!');
 
 At this point, you've seen nearly all of the syntax that Remote Browser provides.
 It makes it really easy to evaluate code in different contexts, and lets you use the browser APIs to control and interact with the browser itself.
+
+
+## Interactive Tour
+
+
+<p align="center">
+    <a alt="A Screenshot of the Tour" href="https://intoli.com/tour">
+        <img width="75%" src="media/tour-screenshot.png" />
+    </a>
+</p>
+
+You can learn more about how Remote Browser works in [the interactive tour](https://intoli.com/tour).
+The tour provides an interactive environment where you can run code examples in your browser without needing to install any software.
+It expands upon some of the fundamental concepts behind Remote Browser, and demonstrates how the library can be used in real-world scenarios.
 
 
 ## Usage Examples
