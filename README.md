@@ -34,7 +34,7 @@ What makes Remote Browser different from these other libraries is that it's buil
 Remote Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
 If you're already familiar with these technologies, then you already know almost everything that you need to use Remote Browser.
 If not, then there are vast learning resources out there, like [The Mozilla Developer Network (MDN)](https://developer.mozilla.org/en-US/docs/Web), which can get you up to speed in no time.
-Be sure to check out the [Introduction](#introduction) and [Usage Examples](#usage-examples) to learn about how Remote Browser makes it easy to use these technologies.
+Be sure to check out the [Introduction](#introduction), the [Interactive Tour](https://intoli.com/tour), and [Usage Examples](#usage-examples) to learn about how Remote Browser makes it easy to use these technologies.
 
 
 ## Table of Contents
