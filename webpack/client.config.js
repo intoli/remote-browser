@@ -17,6 +17,8 @@ const options = {
   },
   externals: [
     'express',
+    'chromedriver',
+    'geckodriver',
     'ws',
   ],
   module: {
