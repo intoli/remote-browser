@@ -114,7 +114,7 @@ export default class Browser extends CallableProxy {
     return result;
   };
 
-  launch = async (browser = 'chrome') => {
+  launch = async (browser = 'firefox') => {
     assert(
       ['chrome', 'firefox', 'remote'].includes(browser),
       'Only Chrome, Firefox, and Remote are supported right now.',

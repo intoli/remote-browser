@@ -17,6 +17,8 @@ const options = {
   },
   externals: [
     'express',
+    'chromedriver',
+    'geckodriver',
     'ws',
   ],
   module: {
@@ -42,7 +44,7 @@ const options = {
   target: 'node',
   devtool: 'source-map',
   node: {
-    __dirname: true,
+    __dirname: false,
   }
 };
 
