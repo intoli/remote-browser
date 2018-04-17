@@ -44,7 +44,7 @@ const options = {
   target: 'node',
   devtool: 'source-map',
   node: {
-    __dirname: true,
+    __dirname: false,
   }
 };
 
