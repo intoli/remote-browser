@@ -87,6 +87,11 @@ jobs:
           name: Write version to package.json
           command: $(yarn bin)/dot-json package.json version ${CIRCLE_TAG:1}
       - run:
+          name: Move files from dist into the project root
+          command: |
+            mv dist/* ./
+            rm -rf dist/
+      - run:
           name: Publish to NPM
           command: npm publish --access=public
 
