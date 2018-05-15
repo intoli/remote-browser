@@ -44,9 +44,6 @@ const options = {
     new webpack.DefinePlugin({
       'typeof window': '"object"',
     }),
-    new webpack.EnvironmentPlugin([
-      'REMOTE_BROWSER_API_URL',
-    ]),
   ],
   target: 'web',
   devtool: 'source-map',
