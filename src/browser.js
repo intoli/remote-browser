@@ -140,7 +140,7 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    const remoteBrowserApiUrl = (window || {}).REMOTE_BROWSER_API_URL
+    const remoteBrowserApiUrl = (typeof window === 'undefined' ? null : window.REMOTE_BROWSER_API_URL)
       || process.env.REMOTE_BROWSER_API_URL;
     if (!remoteBrowserApiUrl) {
       throw new Error((
