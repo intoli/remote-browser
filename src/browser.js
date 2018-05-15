@@ -140,7 +140,9 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    if (!process.env.REMOTE_BROWSER_API_URL) {
+    // eslint-disable-next-line no-undef
+    const remoteBrowserApiUrl = REMOTE_BROWSER_API_URL || process.env.REMOTE_BROWSER_API_URL;
+    if (!remoteBrowserApiUrl) {
       throw new Error((
         'You must specify a remote server using the REMOTE_BROWSER_API_URL environment variable. ' +
         'This should be specified at build-time when building the web client.'
@@ -150,7 +152,7 @@ export default class Browser extends CallableProxy {
     const secure = typeof window === 'undefined' ? null :
       window.location.protocol.startsWith('https');
 
-    let initializationUrl = process.env.REMOTE_BROWSER_API_URL;
+    let initializationUrl = remoteBrowserApiUrl;
     if (secure && initializationUrl.startsWith('http:')) {
       initializationUrl = `https:${initializationUrl.slice(5)}`;
     } else if (secure === false && initializationUrl.startsWith('https:')) {
