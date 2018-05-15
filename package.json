@@ -1,6 +1,6 @@
 {
   "name": "remote-browser",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A low-level browser automation framework built on top of the Web Extensions API standard. ",
   "main": "index.js",
   "repository": "git@github.com:intoli/remote-browser.git",
