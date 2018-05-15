@@ -49,7 +49,9 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Build
-          command: yarn build
+          command: |
+            yarn build
+            yarn build:web
       - persist_to_workspace:
           root: ~/remote-browser
           paths:
