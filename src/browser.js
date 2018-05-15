@@ -140,8 +140,8 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    // eslint-disable-next-line no-undef
-    const remoteBrowserApiUrl = REMOTE_BROWSER_API_URL || process.env.REMOTE_BROWSER_API_URL;
+    const remoteBrowserApiUrl = (window || {}).REMOTE_BROWSER_API_URL
+      || process.env.REMOTE_BROWSER_API_URL;
     if (!remoteBrowserApiUrl) {
       throw new Error((
         'You must specify a remote server using the REMOTE_BROWSER_API_URL environment variable. ' +
