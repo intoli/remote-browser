@@ -140,17 +140,20 @@ export default class Browser extends CallableProxy {
   };
 
   launchRemote = async () => {
-    if (!process.env.REMOTE_BROWSER_API_URL) {
+    const remoteBrowserApiUrl = (typeof window === 'undefined' ? null : window.REMOTE_BROWSER_API_URL)
+      || process.env.REMOTE_BROWSER_API_URL;
+    if (!remoteBrowserApiUrl) {
       throw new Error((
         'You must specify a remote server using the REMOTE_BROWSER_API_URL environment variable. ' +
-        'This should be specified at build-time when building the web client.'
+        'This should be specified at build-time when building the web client. ' +
+        'It can also be specified as `window.REMOTE_BROWSER_API_URL` using `webpack.DefinePlugin()`.'
       ));
     }
     // We can use `http` or `https` in node, so we won't coerce anything if this is `null`.
     const secure = typeof window === 'undefined' ? null :
       window.location.protocol.startsWith('https');
 
-    let initializationUrl = process.env.REMOTE_BROWSER_API_URL;
+    let initializationUrl = remoteBrowserApiUrl;
     if (secure && initializationUrl.startsWith('http:')) {
       initializationUrl = `https:${initializationUrl.slice(5)}`;
     } else if (secure === false && initializationUrl.startsWith('https:')) {

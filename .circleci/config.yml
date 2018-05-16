@@ -49,7 +49,9 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Build
-          command: yarn build
+          command: |
+            yarn build
+            yarn build:web
       - persist_to_workspace:
           root: ~/remote-browser
           paths:
@@ -86,6 +88,11 @@ jobs:
       - run:
           name: Write version to package.json
           command: $(yarn bin)/dot-json package.json version ${CIRCLE_TAG:1}
+      - run:
+          name: Move files from dist into the project root
+          command: |
+            mv dist/* ./
+            rm -rf dist/
       - run:
           name: Publish to NPM
           command: npm publish --access=public
