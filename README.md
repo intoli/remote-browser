@@ -178,7 +178,7 @@ To get started on development, you simply need to clone the repository and insta
 
 ```bash
 # Clone the repository.
-git clone git@github.com:intoli/remote-browser.git
+git clone https://github.com/intoli/remote-browser.git
 cd remote-browser
 
 # Install the dependencies.
