@@ -16,11 +16,11 @@ const constructFileUrl = (connectionUrl, sessionId) => (
 );
 
 
-export const launchChrome = async (connectionUrl, sessionId = 'default') => {
+export const launchChrome = async (connectionUrl, sessionId = 'default', extensionPath = extension) => {
   const driver = await new Builder()
     .forBrowser('chrome')
     .setChromeOptions(new chrome.Options()
-      .addArguments([`--load-extension=${extension}`]))
+      .addArguments([`--load-extension=${extensionPath}`]))
     .setChromeService(new chrome.ServiceBuilder(chromedriver.path))
     .build();
 
@@ -31,7 +31,7 @@ export const launchChrome = async (connectionUrl, sessionId = 'default') => {
 };
 
 
-export const launchFirefox = async (connectionUrl, sessionId = 'default') => {
+export const launchFirefox = async (connectionUrl, sessionId = 'default', extensionPath = extension) => {
   const driver = await new Builder()
     .forBrowser('firefox')
     .setFirefoxOptions(new firefox.Options()
@@ -40,7 +40,7 @@ export const launchFirefox = async (connectionUrl, sessionId = 'default') => {
     .build();
 
   const command = new Command('install addon')
-    .setParameter('path', extension)
+    .setParameter('path', extensionPath)
     .setParameter('temporary', true);
   await driver.execute(command);
 
