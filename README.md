@@ -95,7 +95,7 @@ await browser(createProperties => (
 await browser.tabs.create({ url: 'https://intoli.com' });
 ```
 
-It's mosty immediately clear what's really happening here with the the first `browser.evaluateInBackground()` call.
+It's mostly immediately clear what's really happening here with the the first `browser.evaluateInBackground()` call.
 A function and it's argument are being transmitted to the background script context of a web extension where they're evaluated.
 The next two calls just rip out successive layers of boilerplate, but they're doing the exact same thing.
 
