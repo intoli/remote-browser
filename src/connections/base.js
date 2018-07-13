@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
 
+import JSONfn from 'json-fn';
+
 import { TimeoutError } from '../errors';
 
 
@@ -44,7 +46,7 @@ export default class ConnectionBase extends EventEmitter {
       }
     }
 
-    const message = JSON.parse(data);
+    const message = JSONfn.parse(data);
 
     // Handle responses to messages that we originated.
     if (message.response) {
@@ -57,7 +59,7 @@ export default class ConnectionBase extends EventEmitter {
 
     // Handle messages that we did not originate.
     const responseData = await this.subscriptions[message.channel](message.data);
-    this.ws.send(JSON.stringify({
+    this.ws.send(JSONfn.stringify({
       ...message,
       data: responseData,
       response: true,
@@ -90,7 +92,7 @@ export default class ConnectionBase extends EventEmitter {
     const { messageIndex } = this;
     return new Promise((resolve, revoke) => {
       this.pendingMessageResolves[messageIndex] = resolve;
-      this.ws.send(JSON.stringify(message));
+      this.ws.send(JSONfn.stringify(message));
       setTimeout(() => {
         if (this.pendingMessageResolves[messageIndex]) {
           revoke(new TimeoutError('No websocket response was received within the timeout.'));

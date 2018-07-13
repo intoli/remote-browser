@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
 
+import JSONfn from 'json-fn';
+
 import portfinder from 'portfinder';
 import WebSocket from 'ws';
 
@@ -41,7 +43,7 @@ export default class ConnectionProxy extends EventEmitter {
       this.server.once('listening', () => resolve(connectionPort));
       this.server.on('connection', (ws) => {
         ws.once('message', (initialData) => {
-          const { clientType, sessionId } = JSON.parse(initialData);
+          const { clientType, sessionId } = JSONfn.parse(initialData);
           if (sessionId && this.clientTypes.includes(clientType)) {
             // Clean up any existing websockets and store the new one.
             const existingWebSocket = this.webSockets[clientType][sessionId];
@@ -76,7 +78,7 @@ export default class ConnectionProxy extends EventEmitter {
             });
 
             // Report success.
-            ws.send(JSON.stringify({ success: true }), () => {
+            ws.send(JSONfn.stringify({ success: true }), () => {
               // Write out any pending messages afterwards.
               const pendingMessages = this.pendingMessages[clientType][sessionId] || [];
               delete this.pendingMessages[clientType][sessionId];
@@ -91,7 +93,7 @@ export default class ConnectionProxy extends EventEmitter {
             });
           } else {
             // Report failure.
-            ws.send(JSON.stringify({ success: false }), () => {
+            ws.send(JSONfn.stringify({ success: false }), () => {
               ws.terminate();
             });
           }
