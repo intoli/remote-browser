@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
 
-import JSONfn from 'json-fn';
-
+import { JSONfn } from '../common';
 import { TimeoutError } from '../errors';
 
 

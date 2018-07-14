@@ -1,7 +1,6 @@
 import WebSocket from 'simple-websocket';
 
-import JSONfn from 'json-fn';
-
+import { JSONfn } from '../common';
 import ConnectionBase from './base';
 
 

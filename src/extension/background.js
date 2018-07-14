@@ -1,5 +1,4 @@
-import JSONfn from 'json-fn';
-
+import { JSONfn } from '../common';
 import Client from '../connections/client';
 import { RemoteError } from '../errors';
 

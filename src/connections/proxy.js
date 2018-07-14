@@ -1,9 +1,9 @@
 import EventEmitter from 'events';
 
-import JSONfn from 'json-fn';
-
 import portfinder from 'portfinder';
 import WebSocket from 'ws';
+
+import { JSONfn } from '../common';
 
 
 export default class ConnectionProxy extends EventEmitter {
