@@ -18,6 +18,35 @@ export const serializeFunction = (f) => {
   return serialized;
 };
 
+const nativeCodeSuffix = '{ [native code] }';
+const serializedFunctionPrefix = '__remote-browser-serialized-function__:';
+export const JSONfn = {
+  parse(string) {
+    return JSON.parse(string, (key, value) => {
+      if (typeof value !== 'string' || !value.startsWith(serializedFunctionPrefix)) {
+        return value;
+      }
+      let functionDefinition = value.slice(serializedFunctionPrefix.length);
+      if (value.endsWith(nativeCodeSuffix)) {
+        functionDefinition = functionDefinition.replace(
+          nativeCodeSuffix,
+          '{ console.warn(\'Native code could not be serialized, and was removed.\'); }',
+        );
+      }
+      // eslint-disable-next-line no-eval
+      return eval(functionDefinition);
+    });
+  },
+  stringify(object) {
+    return JSON.stringify(object, (key, value) => {
+      if (value instanceof Function || typeof value === 'function') {
+        return `${serializedFunctionPrefix}${serializeFunction(value)}`;
+      }
+      return value;
+    });
+  },
+};
+
 
 export class TimeoutPromise extends Promise {
   constructor(executor, timeout = 30000) {
