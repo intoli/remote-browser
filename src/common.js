@@ -18,7 +18,7 @@ export const serializeFunction = (f) => {
   return serialized;
 };
 
-const nativeCodeSuffix = '{ [native code] }';
+const nativeCodeRegex = /{\s*\[native code\]\s*}$/i;
 const serializedFunctionPrefix = '__remote-browser-serialized-function__:';
 export const JSONfn = {
   parse(string) {
@@ -27,9 +27,9 @@ export const JSONfn = {
         return value;
       }
       let functionDefinition = value.slice(serializedFunctionPrefix.length);
-      if (value.endsWith(nativeCodeSuffix)) {
+      if (nativeCodeRegex.test(functionDefinition)) {
         functionDefinition = functionDefinition.replace(
-          nativeCodeSuffix,
+          nativeCodeRegex,
           '{ console.warn(\'Native code could not be serialized, and was removed.\'); }',
         );
       }
