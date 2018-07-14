@@ -1,5 +1,6 @@
 import WebSocket from 'simple-websocket';
 
+import { JSONfn } from '../common';
 import ConnectionBase from './base';
 
 
@@ -23,7 +24,7 @@ export default class Client extends ConnectionBase {
       ws.once('connect', () => {
         ws.once('data', (data) => {
           connected = true;
-          const { success } = JSON.parse(data);
+          const { success } = JSONfn.parse(data);
           if (success) {
             this.emit('connection');
             this.attachWebSocket(ws);
@@ -32,7 +33,7 @@ export default class Client extends ConnectionBase {
             revoke();
           }
         });
-        ws.send(JSON.stringify({ clientType, sessionId }));
+        ws.send(JSONfn.stringify({ clientType, sessionId }));
       });
       ws.once('error', (error) => {
         if (!connected) {
