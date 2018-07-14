@@ -22,7 +22,7 @@ class ApiProxy extends CallableProxy {
       apply: async (target, thisArg, argumentsList) => (
         evaluator(
           // eslint-disable-next-line no-template-curly-in-string
-          'async (objectName, argumentsList) => eval(`${objectName}(...${window.JSONfn.stringify(argumentsList)})`)',
+          'async (objectName, argumentsList) => eval(`${objectName}(...window.JSONfn.parse(${JSON.stringify(window.JSONfn.stringify(argumentsList))}))`)',
           objectName,
           argumentsList,
         )

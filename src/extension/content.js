@@ -12,7 +12,7 @@ const handleMessage = ({ id, message }) => {
     const { asyncFunction, args } = message;
     Promise.resolve()
       // eslint-disable-next-line no-eval
-      .then(() => eval(`(${asyncFunction}).apply(null, ${window.JSONfn.stringify(args)})`))
+      .then(() => eval(`(${asyncFunction}).apply(null, window.JSONfn.parse(${JSON.stringify(window.JSONfn.stringify(args))}))`))
       .then(result => backgroundPort.postMessage({ id, message: result }))
       .catch((error) => {
         backgroundPort.postMessage({

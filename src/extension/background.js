@@ -27,7 +27,7 @@ class Background {
     this.client.subscribe(async ({ args, asyncFunction }) => (
       Promise.resolve()
         // eslint-disable-next-line no-eval
-        .then(() => eval(`(${asyncFunction}).apply(null, ${window.JSONfn.stringify(args)})`))
+        .then(() => eval(`(${asyncFunction}).apply(null, window.JSONfn.parse(${JSON.stringify(window.JSONfn.stringify(args))}))`))
         .then(result => ({ result }))
         .catch(error => ({ error: new RemoteError(error) }))
     ), { channel: 'evaluateInBackground' });
