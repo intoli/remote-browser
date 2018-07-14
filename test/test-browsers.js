@@ -191,6 +191,11 @@ import Browser, { RemoteError } from '../dist';
       const readyState = await browser[id].readyState('complete');
       assert.equal(readyState, 'complete');
     });
+
+    it('should allow access to the `browser.webRequest` API', async () => {
+      // This won't match any URLs, but the `addListener()` call should succeed.
+      await browser.webRequest.onBeforeRequest.addListener(() => {}, { urls: ['https://into.li'] });
+    });
   });
 });
 
