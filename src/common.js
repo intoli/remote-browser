@@ -34,7 +34,7 @@ export const JSONfn = {
         );
       }
       // eslint-disable-next-line no-eval
-      return eval(functionDefinition);
+      return eval(`(${functionDefinition})`);
     });
   },
   stringify(object) {
