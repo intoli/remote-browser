@@ -1,7 +1,7 @@
+import JSONfn from 'json-fn';
+
 import Client from '../connections/client';
 import { RemoteError } from '../errors';
-
-import JSONfn from 'json-fn';
 
 
 window.JSONfn = JSONfn;

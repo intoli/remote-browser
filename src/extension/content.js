@@ -1,6 +1,6 @@
-import { RemoteError } from '../errors';
-
 import JSONfn from 'json-fn';
+
+import { RemoteError } from '../errors';
 
 
 window.JSONfn = JSONfn;
