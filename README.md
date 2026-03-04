@@ -31,7 +31,7 @@ You've likely heard of similar browser automation frameworks before, such as [Pu
 Much like these other projects, Remote Browser can be used to accomplish a wide variety of tasks relating to UI testing, Server Side Rendering (SSR), and web scraping.
 What makes Remote Browser different from these other libraries is that it's built using standard cross-browser compatible technologies, and its primary goal is to facilitate interactions with existing APIs rather than to create a new one of its own.
 
-Remote Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
+Remote Browser provides a minimalistic and lightweight framework for automating browsers using vanilla [JavaScript](https://tc39.github.io/ecma262/), [HTML browsing contexts](https://html.spec.whatwg.org/multipage/window-object.html#the-window-object), and the [Web Extensions API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions).
 If you're already familiar with these technologies, then you already know almost everything that you need to use Remote Browser.
 If not, then there are vast learning resources out there, like [The Mozilla Developer Network (MDN)](https://developer.mozilla.org/en-US/docs/Web), which can get you up to speed in no time.
 Be sure to check out the [Introduction](#introduction), the [Interactive Tour](https://intoli.com/tour), and [Usage Examples](#usage-examples) to learn about how Remote Browser makes it easy to use these technologies.
@@ -50,10 +50,10 @@ Be sure to check out the [Introduction](#introduction), the [Interactive Tour](h
 
 ## Introduction
 
-The core technology that makes Remote Browser possible is the [Web Extensions API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions).
+The core technology that makes Remote Browser possible is the [Web Extensions API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions).
 This API is what allows third party browser addons to extend and modify the capabilities of browsers such as Firefox, Chrome, Edge, and Opera.
 If you've never written a browser extension before, then you might be surprised at just how powerful this API is.
-Creating tabs and interacting with pages is just the beginning; it's also possible to [intercept and modify network requests/responses](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest), [create and control containerized sessions within a single browser instance](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/contextualIdentities), [take screenshots](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab), and [*much* more](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API).
+Creating tabs and interacting with pages is just the beginning; it's also possible to [intercept and modify network requests/responses](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest), [create and control containerized sessions within a single browser instance](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/contextualIdentities), [take screenshots](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/captureVisibleTab), and [*much* more](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API).
 The central idea behind Remote Browser is that there's no need to reinvent the wheel when modern browsers *already* ship with an extremely powerful cross-browser compatible API that's suitable for automation tasks.
 
 Let's take a look at a quick example of how you would navigate to a tab and take a screenshot using Remote Browser.
@@ -73,10 +73,10 @@ import Browser from 'remote-browser';
 ```
 
 On the surface, this probably looks pretty similar to examples from other browser automation frameworks.
-The difference is that [browser.tabs.create()](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/create) and [browser.tabs.captureVisibleTab](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab) aren't part of the Remote Browser API; they're part of the Web Extensions API.
+The difference is that [browser.tabs.create()](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create) and [browser.tabs.captureVisibleTab](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/captureVisibleTab) aren't part of the Remote Browser API; they're part of the Web Extensions API.
 
 In a web extension, you would typically interact with the Web Extensions API through a global `browser` object.
-You could make a call to `browser.tabs.create()` in your extension's [background script](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/background), and it would create a new tab.
+You could make a call to `browser.tabs.create()` in your extension's [background script](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background), and it would create a new tab.
 Remote Browser lets you make this call from the environment where you're running your browser control code as though you were inside of an extension.
 The following three calls are actually all exactly equivalent with Remote Browser.
 
@@ -155,7 +155,7 @@ Here's an example of the connection process.
 ![Connecting the Client to a Live Browser](media/live-connection-demo.gif)
 
 The browser interactions that we do in this video aren't particularly useful, but you have the full power of Remote Browser at your fingertips once you're connected.
-You could, for instance, use [web extension alarms](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/alarms) to schedule arbitrary tasks to run in the browser at specified times or intervals.
+You could, for instance, use [web extension alarms](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/alarms) to schedule arbitrary tasks to run in the browser at specified times or intervals.
 These tasks would be scheduled within the browser itself, so you could configure code to run even after the client has disconnected.
 
 
